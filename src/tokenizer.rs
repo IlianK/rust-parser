@@ -1,6 +1,6 @@
-use crate::tokenizer::Token::EOS;
 
-enum Token{
+
+pub(crate) enum Token{
     EOS,
     ZERO,
     ONE,
@@ -9,6 +9,7 @@ enum Token{
     CLOSE,
     PLUS,
     MULT,
+    DEFAULT,
 }
 
 fn show_tok(t: Token) -> &'static str {
@@ -20,34 +21,36 @@ fn show_tok(t: Token) -> &'static str {
         Token::OPEN => "OPEN",
         Token::CLOSE => "CLOSE",
         Token::PLUS => "PLUS",
-        Token::MULT => "MULT"
+        Token::MULT => "MULT",
+        Token::DEFAULT => "DEFAULT"
     }
 }
 
 
-struct Tokenizer {
-    pos: i32,
+pub(crate) struct Tokenizer {
+    pos: usize,
     s: String,
-    token: Token
+    pub(crate) token: Token
 }
 
 
 impl Tokenizer {
-    fn new(text: &str) -> Tokenizer {
+    pub(crate) fn new(mut self, text: &str) -> Tokenizer { // custom default constructor with convention new()
         Tokenizer {
             pos: 0,
             s: text.parse().unwrap(),
-            token: next(),
+            token: Tokenizer::next(self),
         }
     }
-
 
     pub fn next(mut self) -> Token {
         if self.s.len() <= self.pos as usize {
             return Token::EOS;
         }
 
-        return match self.s[self.pos] {
+        let my_vec: Vec<char> = self.s.chars().collect(); //Rust doesn't allow String indexing
+
+        return match my_vec[self.pos] {
             '0' => {
                 self.pos + 1;
                 Token::ZERO
@@ -78,32 +81,32 @@ impl Tokenizer {
             },
             __ => {
                 self.pos + 1;
-                ()
+                Token::DEFAULT
             }  //rest of symbols
         }
 
     }
 
-    fn next_token(&self){
-        token = next();
+    pub(crate) fn next_token(mut self){
+        self.token = Tokenizer::next(self);
     }
 
 
-    pub fn scan(&self) -> Vec<Token> {
+    pub fn scan(mut self) -> Vec<Token> {
 
         let mut v: Vec<Token> = vec![];
         let mut t: Token;
 
-        while t!= EOS{
-            t = next();
+        while t != Token::EOS{
+            t = Tokenizer::next(self);
             v.push(t);
         }
         return v;
     }
 
 
-    pub fn show(&self) -> String{
-        let mut v: Vec<Token> = self.scan();
+    pub fn show(mut self) -> String{
+        let mut v: Vec<Token> = Tokenizer::scan(self);
         let mut s: String = "".to_string();
 
         for n in 0..v.size(){

@@ -1,39 +1,50 @@
-use crate::ast::Exp;
 
-struct Optional<T:Exp>{
+
+pub(crate) struct Optional<T>{
     b: bool,
     val: T
 }
 
-impl Optional<Exp> {
-    fn new()-> Optional<T> {
-        Optional {b: false, val: () }
+
+impl<T> Optional<T>{
+    pub(crate) fn new()-> Optional<T> {
+        Optional {b: false, val: ()}
     }
-    fn new_with_t(v: T) -> Optional<T> {
+    pub(crate) fn new_with_t(v: T) -> Optional<T> {
         Optional {b: true, val: v}
     }
 
-    fn is_just(&self) -> bool{
+    pub(crate) fn is_just(&self) -> bool{
         return self.b;
     }
 
-    fn is_nothing(&self) -> bool{
+    pub(crate) fn is_nothing(&self) -> bool{
         return !(self.b);
     }
 
-    fn from_just(&self) -> T{
+    pub(crate) fn from_just(self) -> T{
         return self.val;
+    }
+
+    pub(crate) fn nothing() -> Optional<T> {
+        return Optional::new();
+    }
+
+    pub(crate) fn just(v: T) -> Optional<T> {
+        return Optional::new_with_t(v);
     }
 }
 
+
+/*
 pub(crate) fn nothing() -> Optional<T> {
     return Optional::new();
 }
 
-pub(crate) fn just(v: Box<Exp>) -> Optional<T> {
+pub(crate) fn just(v: T) -> Optional<T> {
     return Optional::new_with_t(v);
 }
-
+*/
 
 
 

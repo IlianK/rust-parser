@@ -5,7 +5,9 @@ mod tokenizer;
 mod utility;
 mod parser;
 
-fn display(e: Optional<Exp>){
+use crate::utility::Optional;
+
+fn display(e: Optional<Box<dyn Exp>>){
     if e.isNothing() {
         println!("nothing \n");
     }
@@ -27,9 +29,11 @@ fn testParserGood(){
     display(Parser("1 * 2 + 0 ").parse());
     */
 
-    display(Parser("(1 + 2) * 0 ").parse());
+    display(parser::Parser::new("(1 + 2)").parse());
 
-    display(Parser("(1 + 2) * 0 + 2").parse());
+    //display(Parser("(1 + 2) * 0 ").parse());
+
+    //display(Parser("(1 + 2) * 0 + 2").parse());
 }
 
 fn testParser(){
