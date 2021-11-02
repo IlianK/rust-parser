@@ -14,31 +14,32 @@ pub(crate) struct Parser {
 }
 
 impl Parser {
-    pub(crate) fn new(mut self, string_to_parse: &str) -> Parser{
+    pub(crate) fn new(string_to_parse: &str) -> Parser{
         Parser {
-            t: Tokenizer::new(self.t,string_to_parse)
+            t: Tokenizer::helper(string_to_parse)
         }
     }
 
-    pub(crate) fn parse(self) -> Optional<Box<dyn Exp>> {
-        let mut e = Parser::parse_e(self);
+    pub(crate) fn parse(mut self) -> Optional<Box<dyn Exp>>{
+        let mut e = Parser::parse_e(&mut self);
         return e;
     }
 
 
     // E  ::= T E'
-    fn parse_e(self) -> Optional<Box<dyn Exp>> {
-        let t: Optional<Box<dyn Exp>> = Parser::parse_t(self);
+    fn parse_e(&mut self) -> Optional<Box<dyn Exp>> {
+        let t: Optional<Box<dyn Exp>> = Parser::parse_t(&mut self);
         if t.is_nothing() {
             return t;
         }
-        return Parser::parse_e2(self, t.from_just());
+        return Parser::parse_e2(&mut self, t.from_just());
     }
 
 
     // E' ::= + T E' |
-    fn parse_e2(self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
+    fn parse_e2(&mut self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
 
+        // match?
         if self.t.token == Token::PLUS {
             self.t.next_token();
 
@@ -48,7 +49,7 @@ impl Parser {
                 return right;
             }
 
-            return Parser::parse_e2(self,Plus{e1: left, e2: right.fromJust()})
+            return Parser::parse_e2(self,Plus{e1: left, e2: right.from_just()})
 
         }
         return Optional::just(left);
@@ -70,18 +71,18 @@ impl Parser {
 
 
     // T  ::= F T'
-    fn parse_t(self) -> Optional<Box<dyn Exp>> {
-        let f: Optional<Box<dyn Exp>> = Parser::parse_f(self);
+    fn parse_t(&mut self) -> Optional<Box<dyn Exp>> {
+        let f: Optional<Box<dyn Exp>> = Parser::parse_f(&mut self);
 
         if f.is_nothing() {
             return f;
         }
 
-        return Parser::parse_t2(self,f.from_just());
+        return Parser::parse_t2(&mut self,f.from_just());
     }
 
     // T' ::= * F T' |
-    fn parse_t2(self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
+    fn parse_t2(&mut self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
         if self.t.token == Token::MULT{
             self.t.next_token();
             let right: Optional<Box<dyn Exp>> = Parser::parse_f(self);
@@ -97,8 +98,8 @@ impl Parser {
 
 
     // F ::= N | (E)
-    fn parse_f(self) -> Optional<Box<dyn Exp>> {
-        return match self.t.token {
+    fn parse_f(& mut self) -> Optional<Box<dyn Exp>> {
+        return match &self.t.token {
             Token::ZERO => {
                 self.t.next_token();
                 Optional::just(Int{val: 0 })

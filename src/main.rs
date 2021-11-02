@@ -8,11 +8,11 @@ mod parser;
 use crate::utility::Optional;
 
 fn display(e: Optional<Box<dyn Exp>>){
-    if e.isNothing() {
+    if e.is_nothing() {
         println!("nothing \n");
     }
     else{
-        println!( (e.fromJust()).pretty() + "\n");
+        println!( (e.from_just()).pretty() + "\n");
     }
 }
 
