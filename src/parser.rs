@@ -39,20 +39,23 @@ impl Parser {
     // E' ::= + T E' |
     fn parse_e2(&mut self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
 
-        // match?
-        if self.t.token == Token::PLUS {
-            self.t.next_token();
+        return match self.t.token {
+            Token::PLUS => {
+                self.t.next_token();
 
-            let right: Optional<Box<dyn Exp>> = Parser::parse_t(self);  //get next number to append
+                let right: Optional<Box<dyn Exp>> = Parser::parse_t(self);  //get next number to append
 
-            if right.is_nothing() {
-                return right;
+                if right.is_nothing() {
+                    return right;
+                }
+
+                Parser::parse_e2(self, Box::new(Plus { e1: left, e2: right.from_just() }))
             }
 
-            return Parser::parse_e2(self,Plus{e1: left, e2: right.from_just()})
-
+            _ => {
+                Optional::just(left)
+            }
         }
-        return Optional::just(left);
     }
 
     /*
@@ -83,17 +86,21 @@ impl Parser {
 
     // T' ::= * F T' |
     fn parse_t2(&mut self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
-        if self.t.token == Token::MULT{
-            self.t.next_token();
-            let right: Optional<Box<dyn Exp>> = Parser::parse_f(self);
+        return match self.t.token {
+            Token::MULT => {
+                self.t.next_token();
+                let right: Optional<Box<dyn Exp>> = Parser::parse_f(self);
 
-            if right.is_nothing() {
-                return right;
+                if right.is_nothing() {
+                    return right;
+                }
+
+                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.from_just() }))
             }
-
-            return Parser::parse_t2(self,Mult{e1: left, e2:  right.from_just()})
+            _ => {
+                Optional::just(left)
+            }
         }
-        return Optional::just(left);
     }
 
 
@@ -102,15 +109,15 @@ impl Parser {
         return match &self.t.token {
             Token::ZERO => {
                 self.t.next_token();
-                Optional::just(Int{val: 0 })
+                Optional::just(Box::new(Int{val: 0 }))
             },
             Token::ONE => {
                 self.t.next_token();
-                Optional::just(Int{val: 1 })
+                Optional::just(Box::new(Int{val: 1 }))
             },
             Token::TWO => {
                 self.t.next_token();
-                Optional::just(Int{val: 2 })
+                Optional::just(Box::new(Int{val: 2 }))
             },
             Token::OPEN => {
                 self.t.next_token();
@@ -118,11 +125,17 @@ impl Parser {
                 if e.is_nothing() {
                     return e;
                 }
-                if self.t.token != Token::CLOSE {
-                    return Optional::nothing();
+
+                return match self.t.token {
+                    _ => {
+                        Optional::nothing()
+                    }
+                    Token::CLOSE => {
+                        self.t.next_token();
+                        e
+                    }
                 }
-                self.t.next_token();
-                e
+
             }
             __ => {
                 Optional::nothing()

@@ -7,9 +7,9 @@ pub(crate) struct Optional<T>{
 
 impl<T> Optional<T>{
 
-    fn new()-> Optional<T> {Optional {b: false, val: () } }
+    fn new_false()-> Optional<T> {Optional {b: false, val: () } }
 
-    fn new_with_t(v: T) -> Optional<T> {
+    fn new_true(v: T) -> Optional<T> {
         Optional {b: true, val: v}
     }
 
@@ -25,9 +25,9 @@ impl<T> Optional<T>{
         return self.val;
     }
 
-    pub(crate) fn just(v: T) -> Optional<T> { return Optional::new_with_t(v); }
+    pub(crate) fn just(v: T) -> Optional<T> { return Optional::new_true(v); }
     
-    pub(crate) fn nothing() -> Optional<T> { return Optional::new();}
+    pub(crate) fn nothing() -> Optional<T> { return Optional::new_false();}
 }
 
 /*
