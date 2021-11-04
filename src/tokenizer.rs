@@ -1,5 +1,5 @@
 
-pub(crate) enum Token{
+pub enum Token{
     EOS,
     ZERO,
     ONE,
@@ -11,7 +11,7 @@ pub(crate) enum Token{
     DEFAULT
 }
 
-pub(crate) struct Tokenizer{
+pub struct Tokenizer{
     pos: usize,
     s: String,
     pub(crate) token: Token
@@ -19,7 +19,7 @@ pub(crate) struct Tokenizer{
 
 
 impl Tokenizer {
-    pub(crate) fn new(text: &str)->Tokenizer{ //
+    pub fn new(text: &str)->Tokenizer{ //
         Tokenizer{
             pos: 0,
             s: text.parse().unwrap(),
@@ -27,7 +27,7 @@ impl Tokenizer {
         }
     }
 
-    pub(crate) fn helper(text: &str)->Tokenizer{
+    pub fn helper(text: &str)->Tokenizer{
         let mut t = Tokenizer::new(text);
         t.token = Tokenizer::next(&t);
         return t;
@@ -79,7 +79,7 @@ impl Tokenizer {
     }
 
 
-    pub(crate) fn next_token(&mut self){
+    pub fn next_token(&mut self){
         self.token = Tokenizer::next(&self);
     }
 

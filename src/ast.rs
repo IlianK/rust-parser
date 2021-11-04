@@ -15,14 +15,14 @@ pub struct PlusN<T:Exp> {
 */
 
 pub struct Plus<T:Exp>{
-    pub(crate) e1: T,
-    pub(crate) e2: T,
+    pub e1: T,
+    pub e2: T,
 }
 
 
 pub struct Mult<T:Exp>{
-    pub(crate) e1: T,
-    pub(crate) e2: T,
+    pub e1: T,
+    pub e2: T,
 }
 
 impl Exp for Box<dyn Exp>{

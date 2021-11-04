@@ -9,18 +9,18 @@ fn type_of<T>(_: T) -> &'static str {
 }
 */
 
-pub(crate) struct Parser {
+pub struct Parser {
     t: Tokenizer
 }
 
 impl Parser {
-    pub(crate) fn new(string_to_parse: &str) -> Parser{
+    pub fn new(string_to_parse: &str) -> Parser{
         Parser {
             t: Tokenizer::helper(string_to_parse)
         }
     }
 
-    pub(crate) fn parse(mut self) -> Option<Box<dyn Exp>>{
+    pub fn parse(mut self) -> Option<Box<dyn Exp>>{
         let e = Parser::parse_e(&mut self);
         return e;
     }
