@@ -2,17 +2,15 @@ use crate::ast::Exp;
 
 mod ast;
 mod tokenizer;
-mod utility;
 mod parser;
 
-use crate::utility::Optional;
 
-fn display(e: Optional<Box<dyn Exp>>){
-    if e.is_nothing() {
+fn display(e: Option<Box<dyn Exp>>){
+    if e.is_none() {
         println!("nothing \n");
     }
     else{
-        println!( (e.from_just()).pretty() + "\n");
+        println!( (e.is_some()).pretty() + "\n");
     }
 }
 

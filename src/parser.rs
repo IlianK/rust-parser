@@ -1,6 +1,5 @@
 use std::any::type_name;
 use crate::ast::{Exp, Int, Mult, Plus};
-use crate::utility::Optional;
 use crate::tokenizer::Token;
 use crate::tokenizer::Tokenizer;
 
@@ -20,40 +19,40 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse(mut self) -> Optional<Box<dyn Exp>>{
+    pub(crate) fn parse(mut self) -> Option<Box<dyn Exp>>{
         let mut e = Parser::parse_e(&mut self);
         return e;
     }
 
 
     // E  ::= T E'
-    fn parse_e(&mut self) -> Optional<Box<dyn Exp>> {
-        let t: Optional<Box<dyn Exp>> = Parser::parse_t(&mut self);
-        if t.is_nothing() {
+    fn parse_e(&mut self) -> Option<Box<dyn Exp>> {
+        let t: Option<Box<dyn Exp>> = Parser::parse_t(&mut self);
+        if t.is_none() {
             return t;
         }
-        return Parser::parse_e2(&mut self, t.from_just());
+        return Parser::parse_e2(&mut self, t.unwrap());
     }
 
 
     // E' ::= + T E' |
-    fn parse_e2(&mut self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
+    fn parse_e2(&mut self, left: Box<dyn Exp>) -> Option<Box<dyn Exp>>{
 
         return match self.t.token {
             Token::PLUS => {
                 self.t.next_token();
 
-                let right: Optional<Box<dyn Exp>> = Parser::parse_t(self);  //get next number to append
+                let right: Option<Box<dyn Exp>> = Parser::parse_t(self);  //get next number to append
 
-                if right.is_nothing() {
+                if right.is_none() {
                     return right;
                 }
 
-                Parser::parse_e2(self, Box::new(Plus { e1: left, e2: right.from_just() }))
+                Parser::parse_e2(self, Box::new(Plus { e1: left, e2: right.unwrap() }))
             }
 
             _ => {
-                Optional::just(left)
+                Some(left)
             }
         }
     }
@@ -74,71 +73,73 @@ impl Parser {
 
 
     // T  ::= F T'
-    fn parse_t(&mut self) -> Optional<Box<dyn Exp>> {
-        let f: Optional<Box<dyn Exp>> = Parser::parse_f(&mut self);
+    fn parse_t(&mut self) -> Option<Box<dyn Exp>> {
+        let f: Option<Box<dyn Exp>> = Parser::parse_f(&mut self);
 
-        if f.is_nothing() {
+        if f.is_none() {
             return f;
         }
 
-        return Parser::parse_t2(&mut self,f.from_just());
+        return Parser::parse_t2(&mut self,f.unwrap());
     }
 
     // T' ::= * F T' |
-    fn parse_t2(&mut self, left: Box<dyn Exp>) -> Optional<Box<dyn Exp>> {
+    fn parse_t2(&mut self, left: Box<dyn Exp>) -> Option<Box<dyn Exp>> {
         return match self.t.token {
             Token::MULT => {
                 self.t.next_token();
-                let right: Optional<Box<dyn Exp>> = Parser::parse_f(self);
+                let right: Option<Box<dyn Exp>> = Parser::parse_f(self);
 
-                if right.is_nothing() {
+                if right.is_none() {
                     return right;
                 }
 
-                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.from_just() }))
+                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.unwrap() }))
             }
             _ => {
-                Optional::just(left)
+                Some(left)
             }
         }
     }
 
 
     // F ::= N | (E)
-    fn parse_f(& mut self) -> Optional<Box<dyn Exp>> {
+    fn parse_f(& mut self) -> Option<Box<dyn Exp>> {
         return match &self.t.token {
             Token::ZERO => {
                 self.t.next_token();
-                Optional::just(Box::new(Int{val: 0 }))
+                Some(Box::new(Int{val: 0 }))
             },
             Token::ONE => {
                 self.t.next_token();
-                Optional::just(Box::new(Int{val: 1 }))
+                Some(Box::new(Int{val: 1 }))
             },
             Token::TWO => {
                 self.t.next_token();
-                Optional::just(Box::new(Int{val: 2 }))
+                Some(Box::new(Int{val: 2 }))
             },
             Token::OPEN => {
                 self.t.next_token();
-                let e: Optional<Box<dyn Exp>> = Parser::parse_e(self);
-                if e.is_nothing() {
+                let e: Option<Box<dyn Exp>> = Parser::parse_e(self);
+                if e.is_none() {
                     return e;
                 }
 
                 return match self.t.token {
-                    _ => {
-                        Optional::nothing()
-                    }
                     Token::CLOSE => {
                         self.t.next_token();
-                        e
+                        let x: Option<Box<dyn Exp>>  = None;
+                        x
+                    }
+                    _ => {
+                        let x: Option<Box<dyn Exp>>  = None;
+                        x
                     }
                 }
 
             }
             __ => {
-                Optional::nothing()
+                return None;
             }
         }
     }
