@@ -10,11 +10,12 @@ fn display(e: Option<Box<dyn Exp>>){
         println!("nothing \n");
     }
     else{
-        println!( (e.is_some()).pretty() + "\n");
+        let str: String = e.unwrap().pretty() + "\n";
+        println!("{}", str);
     }
 }
 
-fn testParserGood(){
+fn test_parser_good(){
     /*
     display(Parser("1").parse());
 
@@ -34,11 +35,11 @@ fn testParserGood(){
     //display(Parser("(1 + 2) * 0 + 2").parse());
 }
 
-fn testParser(){
-    testParserGood();
+fn test_parser(){
+    test_parser_good();
 }
 
 fn main() {
-    testParser();
+    test_parser();
 }
 

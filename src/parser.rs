@@ -1,12 +1,13 @@
-use std::any::type_name;
+//use std::any::type_name;
 use crate::ast::{Exp, Int, Mult, Plus};
 use crate::tokenizer::Token;
 use crate::tokenizer::Tokenizer;
 
+/*
 fn type_of<T>(_: T) -> &'static str {
     type_name::<T>()
 }
-
+*/
 
 pub(crate) struct Parser {
     t: Tokenizer
@@ -20,18 +21,18 @@ impl Parser {
     }
 
     pub(crate) fn parse(mut self) -> Option<Box<dyn Exp>>{
-        let mut e = Parser::parse_e(&mut self);
+        let e = Parser::parse_e(&mut self);
         return e;
     }
 
 
     // E  ::= T E'
     fn parse_e(&mut self) -> Option<Box<dyn Exp>> {
-        let t: Option<Box<dyn Exp>> = Parser::parse_t(&mut self);
+        let t: Option<Box<dyn Exp>> = Parser::parse_t(self);
         if t.is_none() {
             return t;
         }
-        return Parser::parse_e2(&mut self, t.unwrap());
+        return Parser::parse_e2(self, t.unwrap());
     }
 
 
@@ -48,7 +49,7 @@ impl Parser {
                     return right;
                 }
 
-                Parser::parse_e2(self, Box::new(Plus { e1: left, e2: right.unwrap() }))
+                Parser::parse_e2(self, Box::new(Plus { e1: left, e2: right.unwrap()}))
             }
 
             _ => {
@@ -74,13 +75,13 @@ impl Parser {
 
     // T  ::= F T'
     fn parse_t(&mut self) -> Option<Box<dyn Exp>> {
-        let f: Option<Box<dyn Exp>> = Parser::parse_f(&mut self);
+        let f: Option<Box<dyn Exp>> = Parser::parse_f(self);
 
         if f.is_none() {
             return f;
         }
 
-        return Parser::parse_t2(&mut self,f.unwrap());
+        return Parser::parse_t2(self,f.unwrap());
     }
 
     // T' ::= * F T' |
@@ -94,7 +95,7 @@ impl Parser {
                     return right;
                 }
 
-                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.unwrap() }))
+                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.unwrap()}))
             }
             _ => {
                 Some(left)
@@ -108,15 +109,15 @@ impl Parser {
         return match &self.t.token {
             Token::ZERO => {
                 self.t.next_token();
-                Some(Box::new(Int{val: 0 }))
+                Some(Box::new(Int{val: 0}))
             },
             Token::ONE => {
                 self.t.next_token();
-                Some(Box::new(Int{val: 1 }))
+                Some(Box::new(Int{val: 1}))
             },
             Token::TWO => {
                 self.t.next_token();
-                Some(Box::new(Int{val: 2 }))
+                Some(Box::new(Int{val: 2}))
             },
             Token::OPEN => {
                 self.t.next_token();

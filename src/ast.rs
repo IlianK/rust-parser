@@ -1,36 +1,28 @@
 
-
-
-/*
-no rust-constructor: objects created automatically by passing
-parameters directly: Exp:  new(MultExp{e1: a, e2: b});
-*/
-
-
-
 pub trait Exp{                //base trait for each expression type
     fn eval(&self)->i32;
     fn pretty(&self)->String;   //mut self so struct parameters can be changed over time not necessary for read functions
 }
 
 pub struct Int{
-    pub(crate) val: i32
+    pub(crate) val: i32,
 }
 
+/*
 pub struct PlusN<T:Exp> {
     pub(crate) operands : Vec<T>
 }
-
+*/
 
 pub struct Plus<T:Exp>{
     pub(crate) e1: T,
-    pub(crate) e2: T
+    pub(crate) e2: T,
 }
 
 
 pub struct Mult<T:Exp>{
     pub(crate) e1: T,
-    pub(crate) e2: T
+    pub(crate) e2: T,
 }
 
 impl Exp for Box<dyn Exp>{
@@ -42,6 +34,7 @@ impl Exp for Box<dyn Exp>{
     fn pretty(&self) -> String {
         todo!()
     }
+
 }
 
 
@@ -64,7 +57,15 @@ impl<T:Exp> Exp for Plus<T>{
 
     fn pretty(&self) -> String {
         let mut s = "";
-        s = "(";
+
+        /*
+        if self.been_there {
+            let s = format!( "( {} + {} )", self.e1.pretty(), self.e2.pretty());
+        }
+        else {
+            let s = format!( "{} + {} ", self.e1.pretty(), self.e2.pretty());
+        }
+        */
         return s.parse().unwrap();
     }
 }
@@ -80,11 +81,7 @@ impl<T:Exp> Exp for Mult<T> {
         //self.e1.set_been_there(true);
         //self.e2.set_been_there(true);
 
-        let s = "";
-        //s.append(self.e1.pretty());
-        //s.append("*");
-        //s.append(self.e2.pretty());
-        //s.append("");
+        let s = format!( "( {} * {} )", self.e1.pretty(), self.e2.pretty());
 
         return s.parse().unwrap();
     }
@@ -92,7 +89,7 @@ impl<T:Exp> Exp for Mult<T> {
 
 
 
-
+/*
 impl<T:Exp> Exp for PlusN<T> {
 
     fn eval(&self) -> i32 {
@@ -115,4 +112,4 @@ impl<T:Exp> Exp for PlusN<T> {
         return s.parse().unwrap();
     }
 }
-
+*/

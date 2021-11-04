@@ -11,21 +11,6 @@ pub(crate) enum Token{
     DEFAULT
 }
 
-fn show_tok(t: Token) -> &'static str {
-    match t{
-        Token::EOS => "EOS", // {return "EOS"}
-        Token::ZERO => "ZERO",
-        Token::ONE => "ONE",
-        Token::TWO => "TWO",
-        Token::OPEN => "OPEN",
-        Token::CLOSE => "CLOSE",
-        Token::PLUS => "PLUS",
-        Token::MULT => "MULT",
-        Token::DEFAULT => "DEFAULT"
-    }
-}
-
-
 pub(crate) struct Tokenizer{
     pos: usize,
     s: String,
@@ -48,55 +33,81 @@ impl Tokenizer {
         return t;
     }
 
+
     pub fn next(&self) -> Token {
         if self.s.len() <= self.pos{
             return Token::EOS;
         }
 
         let my_vec: Vec<char> = self.s.chars().collect(); //Rust doesn't allow String indexing
-
-        return match my_vec[self.pos] { //loop?
-            '0' => {
-                self.pos + 1;
-                Token::ZERO
-            },
-            '1' => {
-                self.pos + 1;
-                Token::ONE
-            },
-            '2' => {
-                self.pos + 1;
-                Token::TWO
-            },
-            '(' => {
-                self.pos + 1;
-                Token::OPEN
-            },
-            ')' => {
-                self.pos + 1;
-                Token::CLOSE
-            },
-            '+' => {
-                self.pos + 1;
-                Token::PLUS
-            },
-            '*' => {
-                self.pos + 1;
-                Token::MULT
-            },
-            __ => {
-                self.pos + 1;
-                Token::DEFAULT
-            }  //rest of symbols
+        loop {
+            match my_vec[self.pos] {
+                '0' => {
+                    self.pos + 1;
+                    return Token::ZERO
+                },
+                '1' => {
+                    self.pos + 1;
+                    return Token::ONE
+                },
+                '2' => {
+                    self.pos + 1;
+                    return Token::TWO
+                },
+                '(' => {
+                    self.pos + 1;
+                    return Token::OPEN
+                },
+                ')' => {
+                    self.pos + 1;
+                    return Token::CLOSE
+                },
+                '+' => {
+                    self.pos + 1;
+                    return Token::PLUS
+                },
+                '*' => {
+                    self.pos + 1;
+                    return Token::MULT
+                },
+                __ => {
+                    self.pos + 1;
+                }  //rest of symbols
+            }
         }
 
     }
+
 
     pub(crate) fn next_token(&mut self){
         self.token = Tokenizer::next(&self);
     }
 
 }
+
+
+
+
+
+
+
+
+/*
+fn show_tok(t: Token) -> &'static str {
+    match t{
+        Token::EOS => "EOS", // {return "EOS"}
+        Token::ZERO => "ZERO",
+        Token::ONE => "ONE",
+        Token::TWO => "TWO",
+        Token::OPEN => "OPEN",
+        Token::CLOSE => "CLOSE",
+        Token::PLUS => "PLUS",
+        Token::MULT => "MULT",
+        Token::DEFAULT => "DEFAULT"
+    }
+}
+*/
+
 
 /*
 pub fn scan(tok: Tokenizer) -> Vec<Token> {
