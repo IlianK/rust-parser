@@ -1,5 +1,6 @@
 use crate::ast::Exp;
 
+
 mod ast;
 mod tokenizer;
 mod parser;
@@ -40,6 +41,11 @@ fn test_parser(){
 }
 
 fn main() {
+    //let bt = backtrace::Backtrace::new();
+
+    // do_some_work();
     test_parser();
+
+    //println!("{:?}", bt);
 }
 

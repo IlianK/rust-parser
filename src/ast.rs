@@ -28,11 +28,14 @@ pub struct Mult<T:Exp>{
 impl Exp for Box<dyn Exp>{
 
     fn eval(&self) -> i32 {
-        todo!()
+        let x = 0;
+        return x;
+
     }
 
     fn pretty(&self) -> String {
-        todo!()
+        let x = "here?".to_string();
+        return x;
     }
 
 }
@@ -56,8 +59,7 @@ impl<T:Exp> Exp for Plus<T>{
     }
 
     fn pretty(&self) -> String {
-        let mut s = "";
-
+        let mut s = "or there?";
         /*
         if self.been_there {
             let s = format!( "( {} + {} )", self.e1.pretty(), self.e2.pretty());

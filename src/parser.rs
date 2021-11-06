@@ -20,8 +20,8 @@ impl Parser {
         }
     }
 
-    pub fn parse(mut self) -> Option<Box<dyn Exp>>{
-        let e = Parser::parse_e(&mut self);
+    pub fn parse(&mut self) -> Option<Box<dyn Exp>>{
+        let e = Parser::parse_e(self);
         return e;
     }
 
@@ -129,8 +129,7 @@ impl Parser {
                 return match self.t.token {
                     Token::CLOSE => {
                         self.t.next_token();
-                        let x: Option<Box<dyn Exp>>  = None;
-                        x
+                        e
                     }
                     _ => {
                         let x: Option<Box<dyn Exp>>  = None;
