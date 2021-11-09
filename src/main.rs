@@ -6,7 +6,7 @@ mod tokenizer;
 mod parser;
 
 
-fn display(e: Option<Box<dyn Exp>>){
+fn display(e: Option<Box<Exp>>){
     if e.is_none() {
         println!("nothing \n");
     }

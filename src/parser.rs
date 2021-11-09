@@ -61,10 +61,8 @@ impl Parser {
     /*
          if(type_of(left) == PlusN<Exp> | type_of(left) == Int<Exp>){ //left only consisted of plus operands or Int operand
              //because current token is PLUS next number given in right can be appended
-
              let tmp = new(PlusN<Exp>{v: left});
              tmp.push(right.fromJust());
-
              return parseE2(tmp);
          }
          else{ //left was MultInt
@@ -144,4 +142,3 @@ impl Parser {
         }
     }
 }
-

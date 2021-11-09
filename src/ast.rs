@@ -1,6 +1,5 @@
-
 pub trait Exp{                //base trait for each expression type
-    fn eval(&self)->i32;
+fn eval(&self)->i32;
     fn pretty(&self)->String;   //mut self so struct parameters can be changed over time not necessary for read functions
 }
 
@@ -93,22 +92,16 @@ impl<T:Exp> Exp for Mult<T> {
 
 /*
 impl<T:Exp> Exp for PlusN<T> {
-
     fn eval(&self) -> i32 {
         return 0 //self.operands.iter().sum();
     }
-
     fn pretty(&self)->String{
-
         let mut s = "";
-
         for i in self.operands{
-
             //if i == self.operands.last(){
                 //s.append(i);
             //    break;
             //}
-
             //s.append(i + "+");
         }
         return s.parse().unwrap();
