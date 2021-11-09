@@ -1,95 +1,74 @@
-pub trait Exp{                //base trait for each expression type
-fn eval(&self)->i32;
-    fn pretty(&self)->String;   //mut self so struct parameters can be changed over time not necessary for read functions
+pub enum Exp {
+    Int {
+        val: i32,
+        been_there: bool
+    },
+    Plus {
+        e1: Box<Exp>,
+        e2: Box<Exp>,
+        been_there: bool
+    },
+    Mult{
+        e1: Box<Exp>,
+        e2: Box<Exp>,
+        been_there: bool
+    },
+}
+impl Exp {
+
+    pub(crate) fn set_bt(self: & mut Exp, bool_to_set: bool){
+        return match self {
+            Exp::Int { mut been_there, .. } => { been_there = bool_to_set },
+            Exp::Plus {mut been_there, ..  } => { been_there = bool_to_set},
+            Exp::Mult {mut been_there, .. } => { been_there = bool_to_set}
+        }
+    }
+
+    pub(crate) fn eval(self: &Exp) -> i32 {
+        return match self {
+            Exp::Int { val, .. } => *val,
+            Exp::Plus { e1, e2, .. } => {
+                e1.eval() + e2.eval()
+            },
+            Exp::Mult { e1, e2, .. } => {
+                e1.eval() * e2.eval()
+            }
+        }
+    }
+
+    pub(crate) fn pretty(self: Exp) -> String {
+        return match self {
+            Exp::Int { val, .. } =>  val.to_string(),
+
+            Exp::Plus { e1, e2, been_there } => {
+                return if been_there {
+                    let s = format!("( {} + {} )", e1.pretty(), e2.pretty());
+                    s.to_string()
+
+                } else {
+                    let s = format!("{} + {} ", e1.pretty(), e2.pretty());
+                    s.to_string()
+                }
+            },
+
+            Exp::Mult { mut e1, mut e2, .. } => {
+                e1.set_bt(true);
+                e2.set_bt(true);
+
+                let s = format!( "( {} * {} )", e1.pretty(), e2.pretty());
+
+                s.parse().unwrap()
+            }
+        }
+    }
 }
 
-pub struct Int{
-    pub(crate) val: i32,
-}
 
 /*
 pub struct PlusN<T:Exp> {
     pub(crate) operands : Vec<T>
 }
 */
-
-pub struct Plus<T:Exp>{
-    pub e1: T,
-    pub e2: T,
-}
-
-
-pub struct Mult<T:Exp>{
-    pub e1: T,
-    pub e2: T,
-}
-
-impl Exp for Box<dyn Exp>{
-
-    fn eval(&self) -> i32 {
-        let x = 0;
-        return x;
-
-    }
-
-    fn pretty(&self) -> String {
-        let x = "here?".to_string();
-        return x;
-    }
-
-}
-
-
-impl Exp for Int {   //implementing trait for IntExp (overloading methods)
-
-    fn eval(&self) -> i32 {
-        return self.val
-    }
-
-    fn pretty(&self)->String{
-        return self.val.to_string();
-    }
-}
-
-
-impl<T:Exp> Exp for Plus<T>{
-    fn eval(&self) -> i32 {
-        return self.e1.eval() + self.e2.eval();
-    }
-
-    fn pretty(&self) -> String {
-        let mut s = "or there?";
-        /*
-        if self.been_there {
-            let s = format!( "( {} + {} )", self.e1.pretty(), self.e2.pretty());
-        }
-        else {
-            let s = format!( "{} + {} ", self.e1.pretty(), self.e2.pretty());
-        }
-        */
-        return s.parse().unwrap();
-    }
-}
-
-
-impl<T:Exp> Exp for Mult<T> {
-
-    fn eval(&self) -> i32 {
-        return self.e1.eval() * self.e2.eval()
-    }
-
-    fn pretty(&self)->String{
-        //self.e1.set_been_there(true);
-        //self.e2.set_been_there(true);
-
-        let s = format!( "( {} * {} )", self.e1.pretty(), self.e2.pretty());
-
-        return s.parse().unwrap();
-    }
-}
-
-
-
 /*
 impl<T:Exp> Exp for PlusN<T> {
     fn eval(&self) -> i32 {
