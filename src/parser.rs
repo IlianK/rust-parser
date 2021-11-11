@@ -52,7 +52,7 @@ impl Parser {
                     return right;
                 }
 
-                Parser::parse_e2(self, Box::new(Plus{ e1: left, e2: right.unwrap(), been_there: false }))
+                Parser::parse_e2(self, Box::new(Plus{ e1: left, e2: right.unwrap() }))
             }
 
             _ => {
@@ -98,7 +98,7 @@ impl Parser {
                     return right;
                 }
 
-                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.unwrap(), been_there: false }))
+                Parser::parse_t2(self, Box::new(Mult { e1: left, e2: right.unwrap()}))
             }
             _ => {
                 Some(left)
@@ -112,15 +112,15 @@ impl Parser {
         return match &self.t.token {
             Token::ZERO => {
                 self.t.next_token();
-                Some(Box::new(Int{val: 0, been_there: false }))
+                Some(Box::new(Int{val: 0}))
             },
             Token::ONE => {
                 self.t.next_token();
-                Some(Box::new(Int{val: 1, been_there: false }))
+                Some(Box::new(Int{val: 1}))
             },
             Token::TWO => {
                 self.t.next_token();
-                Some(Box::new(Int{val: 2, been_there: false }))
+                Some(Box::new(Int{val: 2}))
             },
             Token::OPEN => {
                 self.t.next_token();
