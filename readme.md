@@ -104,7 +104,7 @@ kann man diese mit dem Schlüsselwort ```use``` einbinden:
 ```rust
 use std::any::type_name; //Returns the name of a type as a string slice
 ```
-Hierbei ist std das Crate, any das Modul und type_name die Funktion.
+Hierbei ist std das Crate, any das Modul und [type_name](https://doc.rust-lang.org/std/any/fn.type_name.html) die Funktion.
 ![extern_crate_example](pictures/extern_crate_example.JPG)
 
 **Crates**, zu Deutsch "Kisten" sind wie erwähnt Bibliotheken oder Packages und können mithilfe von Rust's
