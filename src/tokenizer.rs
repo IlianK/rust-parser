@@ -14,7 +14,7 @@ pub enum Token{
 pub struct Tokenizer{
     pos: usize,
     s: String,
-    pub(crate) token: Token
+    pub token: Token
 }
 
 

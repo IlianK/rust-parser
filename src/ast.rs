@@ -13,7 +13,7 @@ pub enum Exp {
 }
 impl Exp {
 
-    pub(crate) fn eval(self: &Exp) -> i32 {
+    pub fn eval(self: &Exp) -> i32 {
         return match self {
             Exp::Int { val } => *val,
             Exp::Plus { e1, e2 } => {
@@ -25,7 +25,7 @@ impl Exp {
         }
     }
 
-    pub(crate) fn pretty(self: Exp) -> String {
+    pub fn pretty(self: Exp) -> String {
         return match self {
             Exp::Int { val} =>  val.to_string(),
 

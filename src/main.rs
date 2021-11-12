@@ -1,12 +1,9 @@
-use crate::ast::Exp;
-
-
 mod ast;
 mod tokenizer;
 mod parser;
 
 
-fn display(e: Option<Box<Exp>>){
+fn display(e: Option<Box<ast::Exp>>){
     if e.is_none() {
         println!("nothing \n");
     }
@@ -16,24 +13,28 @@ fn display(e: Option<Box<Exp>>){
     }
 }
 
+fn display_parsing(to_parse: &str) {
+    let parser = parser::Parser::new(to_parse).parse();
+    display(parser);
+}
+
 fn test_parser_good(){
 
-    display(parser::Parser::new("1").parse());
+    display_parsing("1");
 
-    display(parser::Parser::new("1 + 0").parse());
+    display_parsing("1 + 0");
 
-    display(parser::Parser::new("1 + (0)").parse());
+    display_parsing("1 + (0)");
 
-    display(parser::Parser::new("1 + 2 * 0").parse());
+    display_parsing("1 + 2 * 0");
 
-    display(parser::Parser::new("1 * 2 + 0").parse());
+    display_parsing("1 * 2 + 0");
 
+    display_parsing("(1 + 2) * 2");
 
-    display(parser::Parser::new("(1 + 2) * 2").parse());
+    display_parsing("(1 + 2) * 0");
 
-    display(parser::Parser::new("(1 + 2) * 0").parse());
-
-    display(parser::Parser::new("(1 + 2) * 0 + 2").parse());
+    display_parsing("(1 + 2) * 0 + 2");
 }
 
 fn test_parser(){
