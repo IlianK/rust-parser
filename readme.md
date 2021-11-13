@@ -87,8 +87,12 @@ Zur Veranschaulichung bietet Rust ein hilfreiches Feature das eine Dokumentation
 ```
 cargo doc --open
 ```
-![Doc1](pictures/doc1.JPG)
-![Doc2](pictures/doc2.png)
+<img src="pictures/doc1.JPG" width=50% height=50%>
+<img src="pictures/doc2.png" width=50% height=50%>
+
+
+! [Doc1](pictures/doc1.JPG)
+! [Doc2](pictures/doc2.png)
 Dabei sind alle Bestandteile des Projektes, inklusive alle Structs, Enums,
 Funktionen und deren Implementierung zu sehen.
 
