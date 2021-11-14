@@ -1,9 +1,12 @@
+use crate::ast::Exp;
+
 mod ast;
 mod tokenizer;
 mod parser;
 
 
-fn display(e: Option<Box<ast::Exp>>){
+
+fn display(e: Option<Exp>){
     if e.is_none() {
         println!("nothing \n");
     }

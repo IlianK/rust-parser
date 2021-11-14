@@ -1,5 +1,5 @@
 use crate::ast::Exp;
-use crate::tokenizer;
+use crate::tokenizer::*;
 
 
 //use std::any::type_name;
@@ -10,25 +10,25 @@ fn type_of<T>(_: T) -> &'static str {
 */
 
 pub struct Parser {
-    t: tokenizer::Tokenizer
+    t: Tokenizer
 }
 
 impl Parser {
     pub fn new(string_to_parse: &str) -> Parser{
         Parser {
-            t: tokenizer::Tokenizer::helper(string_to_parse)
+            t: Tokenizer::helper(string_to_parse)
         }
     }
 
-    pub fn parse(&mut self) -> Option<Box<Exp>>{
+    pub fn parse(&mut self) -> Option<Exp>{
         let e = Parser::parse_e(self);
         return e;
     }
 
 
     // E  ::= T E'
-    fn parse_e(&mut self) -> Option<Box<Exp>> {
-        let t: Option<Box<Exp>> = Parser::parse_t(self);
+    fn parse_e(&mut self) -> Option<Exp> {
+        let t: Option<Exp> = Parser::parse_t(self);
         if t.is_none() {
             return t;
         }
@@ -37,19 +37,19 @@ impl Parser {
 
 
     // E' ::= + T E' |
-    fn parse_e2(&mut self, left: Box<Exp>) -> Option<Box<Exp>>{
+    fn parse_e2(&mut self, left: Exp) -> Option<Exp>{
 
         return match self.t.token {
-            tokenizer::Token::PLUS => {
+            Token::PLUS => {
                 self.t.next_token();
 
-                let right: Option<Box<Exp>> = Parser::parse_t(self);  //get next number to append
+                let right: Option<Exp> = Parser::parse_t(self);  //get next number to append
 
                 if right.is_none() {
                     return right;
                 }
 
-                Parser::parse_e2(self, Box::new(Exp::Plus{ e1: left, e2: right.unwrap() }))
+                Parser::parse_e2(self, Exp::Plus{ e1: Box::from(left), e2: Box::from(right.unwrap()) })
             }
 
             _ => {
@@ -74,8 +74,8 @@ impl Parser {
 
 
     // T  ::= F T'
-    fn parse_t(&mut self) -> Option<Box<Exp>> {
-        let f: Option<Box<Exp>> = Parser::parse_f(self);
+    fn parse_t(&mut self) -> Option<Exp> {
+        let f: Option<Exp> = Parser::parse_f(self);
 
         if f.is_none() {
             return f;
@@ -85,17 +85,17 @@ impl Parser {
     }
 
     // T' ::= * F T' |
-    fn parse_t2(&mut self, left: Box<Exp>) -> Option<Box<Exp>> {
+    fn parse_t2(&mut self, left: Exp) -> Option<Exp> {
         return match self.t.token {
-            tokenizer::Token::MULT => {
+            Token::MULT => {
                 self.t.next_token();
-                let right: Option<Box<Exp>> = Parser::parse_f(self);
+                let right: Option<Exp> = Parser::parse_f(self);
 
                 if right.is_none() {
                     return right;
                 }
 
-                Parser::parse_t2(self, Box::new(Exp::Mult { e1: left, e2: right.unwrap()}))
+                Parser::parse_t2(self, Exp::Mult { e1: Box::from(left), e2: Box::from(right.unwrap()) })
             }
             _ => {
                 Some(left)
@@ -105,34 +105,34 @@ impl Parser {
 
 
     // F ::= N | (E)
-    fn parse_f(& mut self) -> Option<Box<Exp>> {
+    fn parse_f(& mut self) -> Option<Exp> {
         return match &self.t.token {
-            tokenizer::Token::ZERO => {
+            Token::ZERO => {
                 self.t.next_token();
-                Some(Box::new(Exp::Int{val: 0}))
+                Some(Exp::Int{val: 0})
             },
-            tokenizer::Token::ONE => {
+            Token::ONE => {
                 self.t.next_token();
-                Some(Box::new(Exp::Int{val: 1}))
+                Some(Exp::Int{val: 1})
             },
-            tokenizer::Token::TWO => {
+            Token::TWO => {
                 self.t.next_token();
-                Some(Box::new(Exp::Int{val: 2}))
+                Some(Exp::Int{val: 2})
             },
-            tokenizer::Token::OPEN => {
+            Token::OPEN => {
                 self.t.next_token();
-                let e: Option<Box<Exp>> = Parser::parse_e(self);
+                let e: Option<Exp> = Parser::parse_e(self);
                 if e.is_none() {
                     return e;
                 }
 
                 return match self.t.token {
-                    tokenizer::Token::CLOSE => {
+                    Token::CLOSE => {
                         self.t.next_token();
                         e
                     }
                     _ => {
-                        let x: Option<Box<Exp>>  = None;
+                        let x: Option<Exp>  = None;
                         x
                     }
                 }
