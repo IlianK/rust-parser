@@ -469,28 +469,17 @@ In Rust ist das nicht so einfach umzusetzen, da das Prinzip des Ownerships spezi
 
 ###Rust Ownership
 
-
 ####C++ shared Pointer
 ####Parameter self (self (mut) vs & self (mut))
 ####helper function
-
-###"Vererbung" in Rust
-####Traits
-####Enum
 
 ###Option<T> vs Optional<T>
 ####None
 ####Some
 ####Methoden (Gegenüberstellung)
 
-###Unbekannter Return Type
-####Statische Sprache Rust
-####Dyn Box
-####Enum Branch Methode
-
 ###Anderes
 ####String Indexing
-####C++ switch-case vs Rust pattern matching
 ####format! Macro
 ####type_of 
 
