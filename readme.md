@@ -1,6 +1,6 @@
 # rust-parser
 
-###C++ vs Rust am Beispiel eines einfachen Parsers für arithmetische Ausdrücke
+### C++ vs Rust am Beispiel eines einfachen Parsers für arithmetische Ausdrücke
 
 Der Rust-Parser basiert auf dem C++-Parser Projekt im Rahmen des Softwareprojekts 
 im 2. Semester und dient dazu die Unterschiede zwischen der objektorientierten Umsetzung 
@@ -11,22 +11,22 @@ Als Einführung in die Programmiersprache-Rust habe ich
 folgende [Literatur-Quelle](https://doc.rust-lang.org/book/) benutzt, 
 um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
 
-###Die Quelldateien:
+### Die Quelldateien:
 + **ast.rs:** Stellt einen abstrakten Syntax Baum zur Verfügung,der durch die pretty-printing Funktion in einen String umgewandelt wird
 + **tokenizer.rs:** Zerlegt den Eingabe-String in logisch zusammengehörige Einheiten, den Tokens
 + **parser.rs:** Nimmt als Input die Tokens vom Tokenizer und generiert den AST nach der definierten Grammatik
 + **main.rs:** Allgemeine Testklasse
 ---------
-##Inhalte
+### Inhalte
 1. Grundlagen
 2. Implementierung
-3. ...
+3. Anderes
 ____
-##Grundlagen
+## Grundlagen
 Als erstes werde ich auf die grundlegenden Strukturen der Rust-Dateien, darüber hinaus auf das 
 Package-Management-System Cargo eingehen und diese mit den in C++ zur Verfügung gestellten Funktionalitäten vergleichen.
 
-###Header und Source Files
+### Header und Source Files
 Der erste Unterschied zwischen C++ und Rust liegt in der Strukturierung der Dateien.
 In C++, sowie C werden in den Header-Files (.h und .hpp) Klassen deklariert, definiert, 
 Signaturen für Funktionen und auch Makros festgelegt:
@@ -41,7 +41,7 @@ EXP newMult(EXP l, EXP r);
 Die Quelldateien (.c, .cpp) können die für sie benötigten Deklarationen der Header-Files 
 durch #include implementieren.
 
-In C++ können Klassen ihre Methoden und Felder für andere Klassen, welche von ihr erben,
+In C++ können Klassen ihre Funktionen und Felder für andere Klassen, welche von ihr erben,
 sichtbar machen oder diese verstecken mit den Schlüsselwörtern public, protected und private.
 
 * ```public``` kann intern und von jedem außerhalb der Klasse verwendet werden
@@ -75,7 +75,7 @@ fn parse_e2(&mut self, left: Box<Exp>) -> Option<Box<Exp>>{
     //...
 ```
 
-###Modules
+### Modules
 Module sind eine Ansammlung von Funktionen, Structs, Traits und Implementierungen.
 Das Modul-System hilft dabei den Code in Gruppen zu strukturieren,
 sowie Gültigkeitsbereiche und Datenschutz (public/ private) zu organisieren.
@@ -88,7 +88,7 @@ mod parser;
 ```
 Zur Weiteren Strukturierung des Projektes gilt zu erwähnen, dass mehrere Module eines Projektes ein Crate ergeben.
 
-###Crates
+### Crates
 Rust-Crates sind mit Bibliotheken oder Packages zu vergleichen wie man sie aus C++ kennt.
 Sie können je nach Projekt eine geteilte Bibliothek oder ein ausführbares Programm sein, die durch den Rust Compiler
 **rustc.** kompiliert werden. Jedes Crate hat implizit ein root-Modul, in der der
@@ -125,7 +125,7 @@ Hierbei ist std das Crate, any das Modul und [type_name](https://doc.rust-lang.o
 
 <img src="pictures/extern_crate_example.JPG" alt="extern_crates_example" width=50% height=50%>
 
-###Namensräume
+### Namensräume
 C++-Namensräume werden dazu benutzt um Funktionen, Variablen und Klassen zu gruppieren, damit der Compiler sie von anderen gleichnamigen Signaturen unterscheiden kann.
 In Rust wird dies durch die Module geregelt, 
 wobei jede .rs Datei implizit ein Modul ist, mit gleichem Namen wie die Datei.
@@ -159,7 +159,7 @@ eine eigene .rs Datei ist.
 Package-Manager **Cargo**, als "Fracht" verteilt werden. 
 
 
-###Package manager
+### Package manager
 [Cargo](https://doc.rust-lang.org/cargo/) ist das offizielle Package-Management System
 für Rust und auch wenn es für C++ viele gute Package-Manager gibt wie
 beispielsweise [Conan](https://conan.io/) und
@@ -171,20 +171,30 @@ durchgeführt werden müssen.
 ```cargo build``` baut das Projekt auf.
 
 --------
-##Implementierung
+## Implementierung
 In diesem Abschnitt werde ich erst allgemein auf die Rust-Structs und deren Implementierung eingehen, 
 die in jeder .rs Datei ihre Verwendung finden und danach einzeln auf 
 die Quelldateien.
 
-###Rust Structs
-In C++ gibt es sowohl Klassen als auch Structs mit Feldern und Methoden.
+### Rust Structs
+In C++ gibt es sowohl Klassen als auch Structs mit Feldern und Funktionen.
 Dabei ist der Unterschied nicht sehr groß. Das Vererbungsprinzip gilt für beide.
-Standardmäßig sind Felder in Structs public und Klassen private, können jedoch Felder und Methoden mit 
+Standardmäßig sind Felder in Structs public und Klassen private, können jedoch Felder und Funktionen mit 
 verschiedenen Zugriffsbeschränkungen haben.
 
 Rust hat nur Strukturen (Structs). Diese bestehen aus einer Definition, 
 die die Felder, mit deren Zugriffsrecht festlegt und für die anschließend mit dem Schlüsselwort
 ```impl ``` Funktionen implementiert werden können.
+
+#### self 
+Beim Implementieren von Structs durch ```impl``` ist ```self``` der erste Parameter der in Funktionen verwendet wird.
+Das Schlüsselwort ```self``` ist zu vergleichen mit ```this``` in C++.
+Durch den Punktoperator können wir mithilfe von [self](https://doc.rust-lang.org/std/keyword.self.html) auf die Felder des Structs
+zugreifen.
+
+#### Assoziierte Funktionen
+Alle Funktionen die innerhalb des ```impl``` Blocks gefasst werden, sind assoziiert, da sie dem
+nach dem ```impl``` Block benannten Typ zugeordnet sind.
 
 In C++ wurde eine Basis-Klasse für die Expressions Exp definiert, von der dann 
 IntExp, PlusExp und MultExp erben und durch ihre Felder val bzw. e1 und e2 erweitern.
@@ -207,7 +217,7 @@ pub struct Mult<T:Exp> {
     pub e2: T
 }
 ```
-####"Vererbung" durch Traits
+#### "Vererbung" durch Traits
 In Rust gibt es jedoch keine Vererbung wie man es aus C++ oder Java kennt. 
 Es ist nicht möglich Felder eines Structs zu erweitern.
 Das nächste, was eine Vererbung wie in den objektorientierten Sprachen simulieren kann, sind 
@@ -270,7 +280,7 @@ is much nicer for teaching and ergonomics than “bare trait vs impl Trait”"
 Der Speicher wird automatisch durch den Destruktor
 wieder freigegeben, wenn die Scope in der die Box definiert wurde verlassen wird.
 
-####Branch-Based Inheritance
+#### Branch-Based Inheritance
 Für den rust-parser reicht jedoch eine Branch-basierte Umsetzung der Exp-Vererbung.
 In Rust gibt es wie in C++ Enumerationen (enums). Wird ein Enum nun als Rückgabetyp 
 festgelegt, ist zwar noch immer unbekannt welches der Enum-Varianten am Ende zurückgegeben wird, es ist jedoch
@@ -378,17 +388,19 @@ impl Exp {
     //...pretty
 }
 ```
-####Pattern-Matching
+#### Pattern-Matching
 ```Match``` ähnelt dem Switch-Case Statement von C++. Genau wie bei switch-case
 wird eine Variable mit einer Menge von bekannten Wert-Möglichkeiten verglichen 
 und je nach Ergebnis ein spezifischer Code ausgeführt. Beide haben einen Default-Fall.
 In C++ gekennzeichnet mit ```default:``` und in Rust mit ```__ => {}```
+Das Return kann im pattern-matching ausgeklammert werden.
+
 Rust's pattern-match geht jedoch noch weiter. **switch** Statements können nur
 numerische oder boolsche Werte vergleichen, doch **match** funktioniert sowohl mit
 Integer und Boolschen Werten, als auch mit weiteren Enums, Tupeln, Arrays und 
 eigenen Structs.
 
-In diesem Fall gibt es eine eval()-Methode mit einer Exp-Referenz als Eingabe-Paramter,
+In diesem Fall gibt es eine eval()-Funktion mit einer Exp-Referenz als Eingabe-Paramter,
 welcher mit allen Fällen verglichen wird und die passende Rückgabe liefert.
 
 Im parser.rs wird in der main.rs das pattern-match initiiert:
@@ -409,7 +421,7 @@ Struktur gebundene Variable mit dem Punktoperator aufgerufen werden.
 Variable ```e``` entspricht daher dem
 ```self``` im pattern-matching und gibt den passenden geklammerten oder ungeklammerten Ausdruck zurück.
 
-#### Einschub Konstruktoren
+#### Konstruktoren
 In C++ gibt es zwei Klassen: Zum Einen die Tokenize Klasse mit den Feldern pos für die Position und s für 
 den String, welcher in Tokens zerlegt werden soll. Zum Anderen die Tokenizer Klasse, die von Tokenize erbt 
 und sie um das Feld token erweitert. 
@@ -422,8 +434,15 @@ pub struct Tokenizer{
     pub token: Token
 }
 ```
-Anschließend folgt durch ``impl``` ein Code-Block in der man die zugehörigen Funktionen binden kann.
+Anschließend folgt durch ```impl``` ein Code-Block in der man die zugehörigen Funktionen binden kann.
+Wie vorher erwähnt sind alle Funktionen innerhalb des Blocks assoziiert und haben typischerweise als ersten Parameter
+das Schlüsselwort ```self```. Es kann jedoch auch Funktionen innerhalb geben ohne self-Parameter. Diese sind dann nur Funktionen 
+und nicht Methoden.
 
+* Funktionen: Code, der durch ihren Namen aufgerufen wird
+* Methoden: Code, der durch ihren Namen aufgerufen wird und mit einem Objekt (hier dem Struct) assoziiert wird.
+
+Assoziierte Funktionen ohne self-Parameter werden oft als Konstruktoren benutzt, die eine neue Instanz des Structs zurückgeben:
 ```rust
 impl Tokenizer {
     pub fn new(text: &str) -> Tokenizer { //
@@ -437,8 +456,8 @@ impl Tokenizer {
     //...
 }
 ```
-Die new()-Funktion ist meist optional und eher zur Vereinfachung der Instanziierung gedacht.
-In Rust muss nämlich in Gegensatz zu C++ kein Konstruktor definiert werden.
+Diese new()-Funktion ist meist optional und eher zur Vereinfachung der Instanziierung gedacht.
+In Rust muss nämlich kein Konstruktor definiert werden.
 Möchte man einen neuen Tokenizer erstellen könnte man das auch direkt ohne Methodenaufruf machen,
 indem man die Felder des Tokenizers einen Wert zuweist.
 
@@ -467,19 +486,153 @@ public:
 Variable token bekommt seine erste Zuweisung bereits im Konstruktor durch die next() Funktion.
 In Rust ist das nicht so einfach umzusetzen, da das Prinzip des Ownerships spezielle Betrachtung erfordert.
 
-###Rust Ownership
+### Rust Ownership
+Die sogenannte Eigentümerschaft (Ownership) ist wohl das Merkmal von Rust, dass die 
+Programmiersprache von anderen abhebt. Aufgrund dieses Merkmals wird Rust auch als
+eine "Typsichere" Sprache bezeichnet. Das bedeutet, dass der Compiler sicherstellt, dass jedes 
+Programm ein wohldefiniertes Verhalten hat. Das besondere daran ist, dass Rust dafür
+weder einen Garbage Collector wie Java noch eine manuelle Speicherverwaltung wie in C/C++ braucht. 
 
-####C++ shared Pointer
-####Parameter self (self (mut) vs & self (mut))
-####helper function
+#### Stack und Heap
+In Rust kann Speicher wie in C++ auf dem Heap oder Stack allokiert werden.
+Als kurze Wiederholung hier der Unterschied zwischen Stack und Heap:
 
-###Option<T> vs Optional<T>
-####None
-####Some
-####Methoden (Gegenüberstellung)
+**Stack:**
+* LIFO (Last in Firt Out) Prinzip
+* Speichert Daten die zur Kompilier-Zeit bekannt sind
 
-###Anderes
-####String Indexing
-####format! Macro
-####type_of 
+**Heap:**
+* Dynamische Speicherung von veränderlichen Daten
+* Weniger organisierter Speicher 
+* Speichert Daten die zur Kompilier-Zeit unbekannt sind
 
+#### Ownership Rules
+1. Wenn ein Wert einer Variable zugewiesen wird, ist diese Variable der Eigentümer des Wertes
+2. Ein Wert kann nur einen Eigentümer haben (Ausnahmen mit Shared Ownership std::Rc)
+3. Verlässt der Eigentümer den Gültigkeitsbereich {}, wird der Wert gelöscht
+
+Regel 2. bedeutet daher, dass zwei Variablen nicht auf den gleichen Wert zeigen dürfen.
+Dies gilt jedoch nur für Variablen, die nicht das Copy-Trait implementieren.
+
+Numerische Werte zum Beispiel implementieren Copy implizit. Dadurch wird eine 
+exakte Kopie des Wertes angelegt und an die andere Variable gebunden.
+```rust
+pub fn eval(self: &Exp) -> i32 {
+    return match self {
+        Exp::Plus { e1, e2 } => {
+            let x = e1.eval() + e2.eval();
+            let y = x;
+            x;
+        }
+        //...
+    }
+}
+```
+Dadurch kann x weiterverwendet werden, da der Wert in x lediglich nach y kopiert wurde.
+
+Datentypen wie Vektoren, Strings oder eigene Structs müssten das Copy-Trait explizit
+implementieren.
+Wenn man trotzdem versucht eine Variable einer anderen zuzuweisen, kann nur noch 
+die neue Variable verwendet werden, da die Eigentümerschaft übertragen wurde.
+
+```rust
+Exp::Plus { e1, e2 } => {
+                let s = format!("{} + {}", e1.pretty(), e2.pretty());
+                let t = s;
+                s.to_string()
+            }
+```
+Obwohl im Code optisch gesehen das gleiche wie oben passiert kommt es zu diesem Fehler:
+
+<img src="pictures/copy_error_string.JPG" width=50% alt = "error_copy" height=50%>
+
+Da die neue Variable t nun Eigentümer des Wertes ist, der ursprünglich in s stand, 
+führt die Rückgabe von s zu einem Kompilier-Fehler. Man versucht einen Wert zurückzugeben,
+welcher in eine andere Variable (t) verschoben wurde.
+
+Schwieriger wird es, wenn die Verschiebung nicht mehr so auffällig ist. 
+Besonders bei Funktionsaufrufen muss darauf geachtet werden, nicht ausversehen
+das Besitzrecht abzugeben, wenn man die Variable später noch verwenden will.
+
+Es ist auch nicht immer sinnvoll für Vektoren, Strings oder eigene Structs das Copy-Trait
+zu implementieren, da das Kopieren von Speicher Ressourcen-aufwändig ist.
+Dafür bietet Rust an, das Besitzrecht auszuleihen.
+
+#### Borrow
+
+https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/
+https://stackoverflow.com/questions/59018413/when-to-use-self-self-mut-self-in-methods
+https://doc.rust-lang.org/book/ch05-03-method-syntax.html
+https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/structs.html
+
+
+
+#### Vorteile vom Ownership
+Ein Vorteil einer zum großteil statischen Sprache ist, dass die meisten Variablen
+auf dem Stack gespeichert werden und damit der Zugriff darauf schneller ist. 
+
+* sicherer
+
+Das Schlüsselwort ```self``` ist schon öfters im oberen Code aufgetaucht und hat etwas mit Ownership
+zu tun. 
+
+#### C++ shared Pointer
+#### Parameter self (self (mut) vs & self (mut))
+#### helper function
+
+
+
+### Option<T> vs Optional<T>
+#### None
+#### Some
+#### Methoden (Gegenüberstellung)
+
+
+
+
+
+### Anderes
+In diesem letzten Abschnitt greife ich noch weitere Besonderheiten von Rust auf, die mir im Laufe der
+Projektarbeit begegnet sind und nicht zu den Hauptthemen passten.
+
+#### String Indexing
+In C++ ist es möglich einen String zu indexieren, was innerhalb der next() Methode verwendet wird, 
+um die Position des aktuellen Characters im Eingabe-String zu erhöhen.
+```c++
+Token_t Tokenize::next() {
+    //...
+    while(1) {
+        //...
+        switch(s[pos]) {
+            //...
+        }
+    }
+}
+```
+In Rust ist diese einfache Schreibweise nicht übertragbar, da Indexierung von String nicht möglich ist.
+Der Grund dafür, liegt dabei, dass intern Rust-Strings in UTF-8 kodiert sind und nicht in ASCII.
+UTF-8 ist eine Kodierung mit variabler Länge für Unicode-Zeichen. Da sie variabel ist, kann die Speicherposition
+des n-ten Zeichens nicht bestimmt werden, ohne den gesamten String zu durchlaufen.
+
+Als Workaround in Rust könnte man deshalb den String in einen Vektor kopieren und anschließend diesen zur
+Indexierung nutzen:
+```rust
+    pub fn next(&mut self) -> Token {
+    //...
+    let my_vec: Vec<char> = self.s.chars().collect(); //Rust doesn't allow String indexing // self verbraucht
+
+    loop {
+        match my_vec[self.pos] {
+            //...
+        }
+    }
+}
+```
+
+
+
+#### format! Macro
+#### type_of 
+
+### Quellen
+[String-Indexierung](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208)
