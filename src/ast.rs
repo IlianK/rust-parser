@@ -27,7 +27,9 @@ impl Exp {
 
     pub fn pretty(self: Exp) -> String {
         return match self {
-            Exp::Int { val} =>  val.to_string(),
+            Exp::Int { val} => {
+                val.to_string()
+            },
 
             Exp::Plus { e1, e2 } => {
                 let s = format!("{} + {}", e1.pretty(), e2.pretty());
