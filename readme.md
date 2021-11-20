@@ -10,13 +10,13 @@ Dabei wird ein Hauptaugenmerk auf die speziellen Ownership-Rechte in Rust.
 Als Einführung in die Programmiersprache-Rust habe ich hauptsächlich
 folgende [Literatur-Quelle](https://doc.rust-lang.org/book/) benutzt,
 um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
-Alle Weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) nach Themen hinterlegt.
+Alle weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) nach Themen hinterlegt.
 
 ### Die Quelldateien:
-+ **ast.rs:** Stellt einen abstrakten Syntax Baum zur Verfügung,der durch die pretty-printing Funktion in einen String umgewandelt wird
-+ **tokenizer.rs:** Zerlegt den Eingabe-String in logisch zusammengehörige Einheiten, den Tokens
-+ **parser.rs:** Nimmt als Input die Tokens vom Tokenizer und generiert den AST nach der definierten Grammatik
-+ **main.rs:** Allgemeine Testklasse
++ **ast.rs:** stellt einen abstrakten Syntaxbaum zur Verfügung, der durch die pretty-printing Funktion in einen String umgewandelt wird
++ **tokenizer.rs:** zerlegt den Eingabe-String in logisch zusammengehörige Einheiten, den Tokens
++ **parser.rs:** nimmt als Input die Tokens vom Tokenizer und generiert den AST nach der definierten Grammatik
++ **main.rs:** allgemeine Testklasse
 ---------
 ### Inhalte
 1. [Grundlagen](#grundlagen)
@@ -47,7 +47,7 @@ Alle Weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) na
         5. [Move in Rust](#move-in-rust)
         6. [Borrow](#borrow)
         7. [Passing By ...](#passing-by-)
-        8. [Einschub: Mutability](#einschub-mutabilty)
+        8. [Mutability](#mutability)
             1. [Mutable Reference ](#mutable-reference)
             2. [Die 4 Varianten](#die-4-varianten)
         9. [Ownership in rust-parser](#ownership-in-rust_parser)
@@ -81,14 +81,14 @@ EXP newPlus(EXP l, EXP r);
 EXP newMult(EXP l, EXP r);
 ```
 
-Die Quelldateien (.c, .cpp) können die für sie benötigten Deklarationen der Header-Files
+Die Quelldateien (.c und .cpp) können die für sie benötigten Deklarationen der Header-Files
 durch #include implementieren.
 
 In C++ können Klassen ihre Funktionen und Felder für andere Klassen, welche von ihr erben,
 sichtbar machen oder diese verstecken mit den Schlüsselwörtern public, protected und private.
 
 * ```public``` kann intern und von jedem außerhalb der Klasse verwendet werden
-* ```protected``` kann klassenintern und von Unterklassen verwendet werden
+* ```protected``` kann Klassen-intern und von Unterklassen verwendet werden
 * ```private``` kann nur innerhalb der Klasse verwendet werden
 
 Auch gibt es die Möglichkeit eine andere Klasse als "Freund" zu erlauben auf
@@ -194,7 +194,7 @@ use crate::ast::Exp;
 ```
 
 Explizite Module sind auch möglich, werden aber in dem Projekt nicht genutzt.
-Meistens braucht man sie wenn es nicht sinnvol ist, dass die gesamte Funktionalität eines Moduls
+Meistens braucht man sie, wenn es nicht sinnvoll ist, dass die gesamte Funktionalität eines Moduls
 in eine eigene .rs Datei gepackt wird.
 
 
@@ -236,7 +236,7 @@ Durch den Punktoperator können wir mithilfe von [self](https://doc.rust-lang.or
 zugreifen.
 
 ### Assoziierte Funktionen
-Alle Funktionen die innerhalb des ```impl``` Blocks gefasst werden, sind assoziiert, da sie dem
+Alle Funktionen, die innerhalb des ```impl``` Blocks gefasst werden, sind assoziiert, da sie dem
 nach dem ```impl``` Block benannten Typ zugeordnet sind.
 
 In C++ wurde eine Basis-Klasse für die Expressions Exp definiert, von der dann
@@ -271,8 +271,8 @@ Das nächste, was eine Vererbung wie in den objektorientierten Sprachen simulier
 die sogenannten Traits, die den in Java vorhandenen Interfaces ähneln.
 
 Mit Traits können Funktionen für bestimmtes Verhalten definiert werden.
-Im rust-parser könnte man die Funktionen zum evaluieren (eval()) und
-pretty_printing (pretty()) in einem Trait Exp zusammenfassen.
+Im rust-parser könnte man die Funktionen zum Evaluieren ```eval()``` und
+pretty_printing ```pretty()``` in einem Trait Exp zusammenfassen.
 
 Die Structs Int, Plus und Mult können dieses Verhalten aufnehmen oder "erben"
 und durch ```impl ... for``` anpassen.
@@ -388,15 +388,15 @@ pub enum Exp {
     },
 }
 ```
-würde das theoretisch funktionieren wenn man unbegrenzten Speicher hätte.
+würde das theoretisch funktionieren, wenn man unbegrenzten Speicher hätte.
 Doch der Compiler warnt uns zu recht:
 
 <img src="pictures/error_infinite_size.JPG" width=50% alt = "error_infinite_size" height=50%>
 
-Um zu bestimmen wie viel Speicher für einen Exp-Ausdruck gebraucht wird, geht Rust durch
+Um zu bestimmen, wie viel Speicher für einen Exp-Ausdruck gebraucht wird, geht Rust durch
 jede Möglichkeit durch und richtet sich nach der Variante, die am meisten Speicher braucht.
 Für Int ist das kein Problem, denn wir definieren, dass wir lediglich soviel Platz für
-die größt mögliche 32bit-Integer brauchen.
+die größte mögliche 32bit-Integer brauchen.
 Bei Plus und Mult sieht das anders aus.
 Denn durch diese Definition würde man für jede mögliche Kombination Speicher brauchen.
 Da man endlos Ausdrücke innerhalb Ausdrücke haben kann, würde
@@ -447,7 +447,7 @@ numerische oder boolesche Werte vergleichen, doch **match** funktioniert sowohl 
 Integer und booleschen Werten, als auch mit weiteren Enums, Tupeln, Arrays und
 eigenen Structs.
 
-In diesem Fall gibt es eine eval()-Funktion mit einer Exp-Referenz als Eingabe-Paramter,
+In diesem Fall gibt es eine eval()-Funktion mit einer Exp-Referenz als Eingabe-Parameter,
 welcher mit allen Fällen verglichen wird und die passende Rückgabe liefert.
 
 Im parser.rs wird in der main.rs das pattern-match initiiert:
@@ -466,7 +466,7 @@ Die display()-Funktion bekommt den ast vom Parser. pretty() nimmt als Parameter 
 Jede Funktion, die ein (mut) self oder &(mut) self als Parameter besitzt, kann von der an die
 Struktur gebundene Variable mit dem Punktoperator aufgerufen werden.
 Variable ```e``` entspricht daher dem
-```self``` im pattern-matching und gibt den passenden geklammerten oder ungeklammerten Ausdruck zurück.
+```self``` im pattern-matching und gibt den passenden geklammerten oder nicht geklammerten Ausdruck zurück.
 
 ## Konstruktoren
 In C++ gibt es zwei Klassen: Zum einen die Tokenize Klasse mit den Feldern pos für die Position und s für
@@ -505,7 +505,7 @@ impl Tokenizer {
 ```
 Diese new()-Funktion ist meist optional und eher zur Vereinfachung der Instanziierung gedacht.
 In Rust muss nämlich kein Konstruktor definiert werden.
-Möchte man einen neuen Tokenizer erstellen könnte man das auch direkt ohne Methodenaufruf machen,
+Möchte man einen neuen Tokenizer erstellen`, könnte man das auch direkt ohne Methodenaufruf machen,
 indem man die Felder des Tokenizers einen Wert zuweist.
 
 ```rust
@@ -566,7 +566,7 @@ freigegeben.
 
 Regel 2. bedeutet daher, dass zwei Variablen nicht auf den gleichen Wert zeigen dürfen.
 Denn sonst würde es mehrere Besitzer geben.
-Versucht man dies trotzdem, könnte man (je nach Datentyp) einen Kompilier-Fehler bekommen.
+Versucht man dies trotzdem, könnte man (je nach Datentyp) einen Compiler-Fehler bekommen.
 
 Dies gilt nur für Variablen, die nicht das Copy-Trait implementieren.
 Durch Copy wird eine exakte Kopie des Wertes angelegt und an die andere
@@ -607,7 +607,7 @@ In C++ würde diese Zuweisung funktionieren, da eine **Shallow Copy** durchgefü
 Die Variablen s und t beziehen sich zu Beginn auf unterschiedliche Speicherbereiche.
 Wenn s der Variablen t zugewiesen wird, beziehen sich die beiden Variablen auf denselben Speicherbereich, da nur der
 Pointer kopiert wurde.
-Änderungen an einer der beiden Variablen würden sich die Inhalte der jeweilig anderen Variablen auswirken,
+Änderungen an einer der beiden Variablen würden sich die Inhalte der jeweils anderen Variablen auswirken,
 da sie auf die gleiche Speicherstelle zeigen.
 
 Die **Deep Copy** würde der Implementation des Copy-Traits in Rust entsprechen.
@@ -619,7 +619,7 @@ nicht geteilt wird.
 ### Move in Rust
 Aufgrund des Ownerships in Rust, können zwei Variablen nicht auf den gleichen Speicher zeigen.
 Nach der Zuweisung ist die neue Variable t nun Eigentümer des Wertes, der ursprünglich in s stand.
-Es kommt zu einem Kompilier-Fehler, da man versucht einen Wert zurückzugeben,
+Es kommt zu einem Compiler-Fehler, da man versucht einen Wert zurückzugeben,
 welcher in eine andere Variable (t) verschoben wurde. Daher spricht man von einem ```move```
 
 Damit wird auch das Problem in C++ umgangen, versehentlich zweimal denselben Speicher freizugeben.
@@ -628,7 +628,7 @@ den Gültigkeitsbereich verlässt.
 
 
 Schwieriger wird es, wenn die Verschiebung nicht mehr so auffällig ist.
-Besonders bei Funktionsaufrufen muss darauf geachtet werden, nicht ausversehen
+Besonders bei Funktionsaufrufen muss darauf geachtet werden, nicht aus Versehen
 das Besitzrecht abzugeben, wenn man die Variable später noch verwenden will.
 
 Es ist auch nicht immer sinnvoll für Vektoren, Strings oder eigene Structs das Copy-Trait
@@ -660,9 +660,9 @@ Datenstruktur des Parsers ```self``` übergeben.
 Ohne das Schlüsselwort ```mut``` würde man eine solche Referenz übergeben, um
 die Daten in dem Struct zu lesen.
 
-### Einschub: Mutabilty
+### Mutability
 Jedoch möchte man häufig die Daten des Structs verändern, neu zuweisen, überschreiben, etc.
-In Rust ist nicht möglich so eine Einfache Überschreibung wie hier zu machen:
+In Rust ist nicht möglich so eine einfache Überschreibung wie hier zu machen:
 ```rust
 let x = 5;
 x = 6;
@@ -843,7 +843,7 @@ anstatt nach einem Fehler direkt das Programm zu stoppen.
 Beim Parser kann es zum Beispiel sein, dass man mehrere Aufrufe mit verschiedenen Strings
 machen will. Um dann direkt zu sehen, warum gerade eine bestimmte Eingabe zu einem Fehler
 geführt hat und andere nicht, können die Fehlschläge sichtbar gemacht werden.
-Zum Beispiel indem man "nothing" zurückgibt.
+Zum Beispiel, indem man "nothing" zurückgibt.
 
 #### Optional in C++
 Im C++ Projekt wurde in der utility.h Datei eine Klasse Optional angelegt, 
@@ -865,7 +865,7 @@ public:
     Optional() : b(false) {}
     Optional(T v) : val(v), b(true) {}
 ```
-Einen ohne Eingabeparamter und einen mit einem generischen Wert.
+Einen ohne Eingabeparameter und einen mit einem generischen Wert.
 Falls beim Aufruf ein Wert enthalten ist, wird das Feld ```val``` mit 
 dem jeweils übergebenen Wert gesetzt und das Feld ```bool``` auf ```true```, 
 da ein Wert vorhanden ist.
@@ -965,14 +965,14 @@ ____
 ## Quellen
 Alle Quellen wurden zuletzt am 20.11.2021 aufgerufen.
 
-### Books
+### Books:
 + [Installation Rust](https://doc.rust-lang.org/book/ch01-01-installation.html)
 + [Cargo Book](https://doc.rust-lang.org/cargo/)
 + [Rust Book](https://doc.rust-lang.org/book/title-page.html)
 + [Rust Reference](https://doc.rust-lang.org/beta/reference/introduction.html)
 + [Guide to Porting C/C++ to Rust](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/)
 
-### Grundlagen
+### Grundlagen:
 + [Source Layout and Other General Points](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/source_layout/)
 + [Packages and Crates](https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html)
 + [Crates and Modules](https://www.cs.brandeis.edu/~cs146a/rust/doc-02-21-2015/book/crates-and-modules.html)
@@ -983,24 +983,24 @@ Alle Quellen wurden zuletzt am 20.11.2021 aufgerufen.
 + [FAQ Cargo Book](https://doc.rust-lang.org/cargo/faq.html)
 + [Rust vs C++](https://www.incredibuild.com/blog/rust-vs-c-and-is-it-good-for-enterprise)
 
-### Implementierung
-#### Box
+### Implementierung:
+#### Box:
 + [Box, stack and Heap](https://doc.rust-lang.org/rust-by-example/std/box.html)
 + [Box<T> to Point to Data on the Heap](https://doc.rust-lang.org/book/ch15-01-box.html)
 
-#### Option
+#### Option:
 + [enum Option](https://doc.rust-lang.org/core/option/enum.Option.html#variant.None)
 + [Modul Option](https://doc.rust-lang.org/std/option/)
 
-#### Ownership
+#### Ownership:
 + [Rust Ownership Stack and Heap](https://www.tutorialspoint.com/rust/rust_ownership.htm)
 + [When to use self, &self, &mut self in methods?](https://stackoverflow.com/questions/59018413/when-to-use-self-self-mut-self-in-methods)
 + [Rust Ownership by Example](https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/)
 + [What is Ownership?](https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html)
 + [Lifetimes, References and Borrowing](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/references_and_borrowing.html)
 
-#### Anderes
+#### Anderes:
 + [String Indexing](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208)
-+ [Virtal Function Equivalent](https://stackoverflow.com/questions/44783925/what-is-the-rust-equivalent-to-cs-virtual-functions)
++ [Virtual Function Equivalent](https://stackoverflow.com/questions/44783925/what-is-the-rust-equivalent-to-cs-virtual-functions)
 + [Rust Traits and Trait Objects](https://joshleeb.com/posts/rust-traits-and-trait-objects/)
 + [Method Syntax](https://doc.rust-lang.org/book/ch05-03-method-syntax.html)
