@@ -962,9 +962,44 @@ In Rust erledigt das die Methode ```unwrap()->T```.
 
 ____
 ## Quellen
-[String-Indexierung](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208)
+Alle Quellen wurden zuletzt am 20.11.2021 aufgerufen.
 
-https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/
-https://stackoverflow.com/questions/59018413/when-to-use-self-self-mut-self-in-methods
-https://doc.rust-lang.org/book/ch05-03-method-syntax.html
-https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/structs.html
+### Books
++ [Installation Rust](https://doc.rust-lang.org/book/ch01-01-installation.html)
++ [Cargo Book](https://doc.rust-lang.org/cargo/)
++ [Rust Book](https://doc.rust-lang.org/book/title-page.html)
++ [Rust Reference](https://doc.rust-lang.org/beta/reference/introduction.html)
++ [Guide to Porting C/C++ to Rust](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/)
+
+### Grundlagen
++ [Source Layout and Other General Points](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/source_layout/)
++ [Packages and Crates](https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html)
++ [Crates and Modules](https://www.cs.brandeis.edu/~cs146a/rust/doc-02-21-2015/book/crates-and-modules.html)
++ [crates.io](https://crates.io/)
++ [Module Kontrollumfang und Datenschutz](https://rust-lang-de.github.io/rustbook-de/ch07-02-defining-modules-to-control-scope-and-privacy.html)
++ [Namespacing with Modules](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/namespacing_with_modules/)
++ [Why Cargo Exists](https://doc.rust-lang.org/cargo/guide/why-cargo-exists.html#preliminaries)
++ [FAQ Cargo Book](https://doc.rust-lang.org/cargo/faq.html)
++ [Rust vs C++](https://www.incredibuild.com/blog/rust-vs-c-and-is-it-good-for-enterprise)
+
+### Implementierung
+#### Box
++ [Box, stack and Heap](https://doc.rust-lang.org/rust-by-example/std/box.html)
++ [Box<T> to Point to Data on the Heap](https://doc.rust-lang.org/book/ch15-01-box.html)
+
+#### Option
++ [enum Option](https://doc.rust-lang.org/core/option/enum.Option.html#variant.None)
++ [Modul Option](https://doc.rust-lang.org/std/option/)
+
+#### Ownership
++ [Rust Ownership Stack and Heap](https://www.tutorialspoint.com/rust/rust_ownership.htm)
++ [When to use self, &self, &mut self in methods?](https://stackoverflow.com/questions/59018413/when-to-use-self-self-mut-self-in-methods)
++ [Rust Ownership by Example](https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/)
++ [What is Ownership?](https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html)
++ [Lifetimes, References and Borrowing](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/references_and_borrowing.html)
+
+#### Anderes
++ [String Indexing](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208)
++ [Virtal Function Equivalent](https://stackoverflow.com/questions/44783925/what-is-the-rust-equivalent-to-cs-virtual-functions)
++ [Rust Traits and Trait Objects](https://joshleeb.com/posts/rust-traits-and-trait-objects/)
++ [Method Syntax](https://doc.rust-lang.org/book/ch05-03-method-syntax.html)
