@@ -7,9 +7,10 @@ im 2. Semester und dient dazu die Unterschiede zwischen der objektorientierten U
 in C++ und der datenorientierten Gestaltung in Rust aufzuzeigen.
 Dabei wird ein Hauptaugenmerk auf die speziellen Ownership-Rechte in Rust.
 
-Als Einführung in die Programmiersprache-Rust habe ich
+Als Einführung in die Programmiersprache-Rust habe ich hauptsächlich
 folgende [Literatur-Quelle](https://doc.rust-lang.org/book/) benutzt,
 um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
+Alle Weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) nach Themen hinterlegt.
 
 ### Die Quelldateien:
 + **ast.rs:** Stellt einen abstrakten Syntax Baum zur Verfügung,der durch die pretty-printing Funktion in einen String umgewandelt wird
