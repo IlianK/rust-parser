@@ -12,8 +12,8 @@ pub enum Token{
 }
 
 pub struct Tokenizer{
-    pos: usize,
-    s: String,
+    pub pos: usize,
+    pub s: String,
     pub token: Token
 }
 
@@ -22,7 +22,7 @@ impl Tokenizer {
     pub fn new(text: &str)->Tokenizer{ //
         Tokenizer{
             pos: 0,
-            s: text.parse().unwrap(),
+            s: text.to_string(),
             token: Token::DEFAULT
         }
     }
