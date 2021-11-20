@@ -20,7 +20,7 @@ um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
 ### Inhalte
 1. Grundlagen
 2. Implementierung
-3. Anderes
+3. ...
 ____
 ## Grundlagen
 Als erstes werde ich auf die grundlegenden Strukturen der Rust-Dateien, darüber hinaus auf das 
@@ -511,11 +511,19 @@ Als kurze Wiederholung hier der Unterschied zwischen Stack und Heap:
 2. Ein Wert kann nur einen Eigentümer haben (Ausnahmen mit Shared Ownership std::Rc)
 3. Verlässt der Eigentümer den Gültigkeitsbereich {}, wird der Wert gelöscht
 
-Regel 2. bedeutet daher, dass zwei Variablen nicht auf den gleichen Wert zeigen dürfen.
-Dies gilt jedoch nur für Variablen, die nicht das Copy-Trait implementieren.
+#### Binding
+Das Zuweisen eines Wertes zu einer Variablen wird als "Binding" bezeichnet. Der 
+Wert wird an die Variable gebunden und "besitzt" ihn nun und das so lange, bis
+die Variable aus dem Gültigkeitsbereich geht. Dann wird der Speicher der Variable 
+freigegeben. 
 
-Numerische Werte zum Beispiel implementieren Copy implizit. Dadurch wird eine 
-exakte Kopie des Wertes angelegt und an die andere Variable gebunden.
+Regel 2. bedeutet daher, dass zwei Variablen nicht auf den gleichen Wert zeigen dürfen.
+Denn sonst würde es mehrere Besitzer geben.
+Versucht man dies trotzdem, könnte man (je nach Datentyp) einen Kompilier-Fehler bekommen.
+
+Dies gilt nur für Variablen, die nicht das Copy-Trait implementieren.
+Durch Copy wird eine exakte Kopie des Wertes angelegt und an die andere 
+Variable gebunden. Numerische Werte implementieren Copy implizit. 
 ```rust
 pub fn eval(self: &Exp) -> i32 {
     return match self {
@@ -528,7 +536,8 @@ pub fn eval(self: &Exp) -> i32 {
     }
 }
 ```
-Dadurch kann x weiterverwendet werden, da der Wert in x lediglich nach y kopiert wurde.
+Deswegen kann x weiterverwendet werden, da der Wert in x lediglich nach y kopiert wurde 
+und beide Variablen Besitzer ihres jeweiligen Wertes sind.
 
 Datentypen wie Vektoren, Strings oder eigene Structs müssten das Copy-Trait explizit
 implementieren.
@@ -542,23 +551,125 @@ Exp::Plus { e1, e2 } => {
                 s.to_string()
             }
 ```
-Obwohl im Code optisch gesehen das gleiche wie oben passiert kommt es zu diesem Fehler:
+Obwohl im Code optisch gesehen das gleiche wie oben angewandt wird, kommt es zu diesem Fehler:
 
 <img src="pictures/copy_error_string.JPG" width=50% alt = "error_copy" height=50%>
 
-Da die neue Variable t nun Eigentümer des Wertes ist, der ursprünglich in s stand, 
-führt die Rückgabe von s zu einem Kompilier-Fehler. Man versucht einen Wert zurückzugeben,
-welcher in eine andere Variable (t) verschoben wurde.
+#### Shallow and Deep Copy in C++
+In C++ würde diese Zuweisung funktionieren, da eine **Shallow Copy** durchgeführt werden würde.
+Die Variablen s und t beziehen sich zu Beginn auf unterschiedliche Speicherbereiche.
+Wenn s der Variablen t zugewiesen wird, beziehen sich die beiden Variablen auf denselben Speicherbereich, da nur der 
+Pointer kopiert wurde. 
+Änderungen an einer der beiden Variablen würden sich die Inhalte der jeweilig anderen Variablen auswirken,
+da sie auf die gleiche Speicherstelle zeigen.
+
+Die **Deep Copy** würde der Implementation des Copy-Traits in Rust entsprechen. 
+Die Variablen s unt t zeigen auf verschiedene Speicherbereiche. Wenn s der Variablen t zugewiesen wird,
+werden die Werte aus dem Speicherbereich, auf den s zeigt, in den Speicherbereich kopiert, auf den t zeigt.
+Spätere Änderungen an einer der beiden Variablen bleiben eindeutig, da der Speicher 
+nicht geteilt wird.
+
+#### Move in Rust
+Aufgrund des Ownerships in Rust, können zwei Variablen nicht auf den gleichen Speicher zeigen.
+Nach der Zuweisung ist die neue Variable t nun Eigentümer des Wertes, der ursprünglich in s stand.
+Es kommt zu einem Kompilier-Fehler, da man versucht einen Wert zurückzugeben,
+welcher in eine andere Variable (t) verschoben wurde. Daher spricht man von einem ```move```
+
+Damit wird auch das Problem in C++ umgangen, versehentlich zweimal denselben Speicher freizugeben.
+Wenn nur eine Variable valide ist, wird nur einmal der Speicher freigegeben, wenn diese 
+den Gültigkeitsbereich verlässt.
+
 
 Schwieriger wird es, wenn die Verschiebung nicht mehr so auffällig ist. 
 Besonders bei Funktionsaufrufen muss darauf geachtet werden, nicht ausversehen
 das Besitzrecht abzugeben, wenn man die Variable später noch verwenden will.
 
 Es ist auch nicht immer sinnvoll für Vektoren, Strings oder eigene Structs das Copy-Trait
-zu implementieren, da das Kopieren von Speicher Ressourcen-aufwändig ist.
+zu implementieren, das das Kopieren von Speicher Ressourcen-aufwändig ist.
 Dafür bietet Rust an, das Besitzrecht auszuleihen.
 
 #### Borrow
+Wie oben gesehen, kann ein Wert (der nicht Copy implementiert), nicht einer anderen
+Variablen zugewiesen und danach weiter benutzt werden. 
+Jedoch kann man mit ```&``` den Wert an eine Variable oder als Argument an eine
+Funktion als **Referenz** ausleihen. 
+Eine Variable, die nun eine Referenz auf einen Wert enthält, kann wiederum ohne 
+vorangestellten ```&``` Operator an Funktionen übergeben werden oder wieder an 
+andere Variablen. Diese Zuweisungen funktionieren, weil Referenzen auch das Copy-Trait 
+[implementieren](https://stackoverflow.com/questions/41413336/do-all-primitive-types-implement-the-copy-trait).
+
+##### Zusammenfassung der Regeln: 
+Als Wert übergeben (Passing by value)
+* Wert implementiert Copy-Trait und wird nicht ausgeliehen
+* Wert ist eine Referenz, welche das Copy-Trait implementiert 
+
+Als Referenz übergeben (Passing by Reference)
+* Wert implementiert Copy-Trait und wird ausgeliehen
+* Wert implementiert nicht Copy-Trait und muss ausgeliehen werden
+
+In den Signaturen der parse_ Funktionen ist immer zu Beginn der Parameter 
+```& mut self``` zu sehen. Es wird also eine Referenz ```&``` auf die 
+Datenstruktur des Parsers ```self``` übergeben. 
+Ohne das Schlüsselwort ```mut``` würde man eine solche Referenz übergeben, um
+die Daten in dem Struct zu lesen.
+
+#### Mutabilty
+Jedoch möchte man häufig die Daten des Structs verändern, neu zuweisen, überschreiben, etc.
+In Rust ist nicht möglich so eine Einfache Überschreibung wie hier zu machen:
+```rust
+let x = 5;
+x = 6;
+```
+In Rust, sind Variablen Default-mäßig unveränderlich (immutable).
+Um eine Variable oder Daten im Struct veränderlich zu machen muss dies durch ```mut``` explizit 
+angegeben werden.
+```rust
+let mut x = 5;
+x = 6;
+```
+
+#### Veränderliche Referenz & mut
+Die Veränderlichkeit von Variablen hat insofern etwas mit der Eigentümerschaft zu tun,
+dass man einer Funktion erlaubt, den ausgeliehenen Wert (die Referenz) zu verändern.
+```& mut self``` als Parameter in den parse_ Funktionen bedeutet daher:
+Man übergibt der Funktion eine Referenz, die die Felder der Datenstruktur Parser
+verändern darf, ohne die Eigentümerschaft abzugeben.
+```& mut self``` ist die Kurzform für ```self: & mut Self```.
+Self wiederum, ist ein Alias für den Typ, welcher vom ```impl``` Block implementiert wird
+
+#### Die 4 Möglichkeiten: 
+* **self:** immutable move
+* **mut self:** mutable move
+* **&self:** immutable borrow
+* **&mut self:** mutable borrow
+
+#### Ownership in parser.rs und tokenizer.rs
+Zunächst mal muss auf jeden Fall die parse_f Funktion eine veränderbare Referenz auf 
+die Parser Instanz bekommen, da sie das Feld t, welches den Tokenizer enthält für
+den aktuellen Token auslesen muss.
+Da man zur Compile-Zeit nicht weiß welcher Weg durch die rekursiven Aufrufe 
+zum Bau der ast-Struktur eingeschlagen wird, müssen alle anderen parse_ Funktionen
+ebenfalls ```&mut self``` als ersten Parameter enthalten. 
+Das Besitzrecht für die Instanz wird quasi durchgereicht bis an die parse_f Funktion.
+
+Kompliziert wurde es mit dem Besitzrecht in der Konstruktor-ähnlichen 
+new-Funktion im tokenizer.rs. 
+Die Parser Datenstruktur hat als einziges Feld einen Tokenizer. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/
 https://stackoverflow.com/questions/59018413/when-to-use-self-self-mut-self-in-methods
@@ -567,7 +678,7 @@ https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rus
 
 
 
-#### Vorteile vom Ownership
+#### Vorteile
 Ein Vorteil einer zum großteil statischen Sprache ist, dass die meisten Variablen
 auf dem Stack gespeichert werden und damit der Zugriff darauf schneller ist. 
 
@@ -576,9 +687,9 @@ auf dem Stack gespeichert werden und damit der Zugriff darauf schneller ist.
 Das Schlüsselwort ```self``` ist schon öfters im oberen Code aufgetaucht und hat etwas mit Ownership
 zu tun. 
 
-#### C++ shared Pointer
-#### Parameter self (self (mut) vs & self (mut))
-#### helper function
+####C++ shared Pointer
+####Parameter self (self (mut) vs & self (mut))
+####helper function
 
 
 
@@ -632,7 +743,7 @@ Indexierung nutzen:
 
 
 #### format! Macro
-#### type_of 
+####type_of 
 
 ### Quellen
 [String-Indexierung](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208)
