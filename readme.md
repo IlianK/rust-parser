@@ -22,19 +22,23 @@ um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
    1. [Header und Source Files](#header-und-source-files)
    2. [Modules](#modules)
    3. [Crates](#crates)
-   4. [Namensräume](#namensrume)
+   4. [Namensraum](#namensraum)
    5. [Package manager](#package-manager)
    
 2. [Implementierung](#implementierung)
    1. [Rust Structs](#rust-structs)
       1. [self Parameter](#self)
       2. [Assoziierte Funktionen](#assoziierte-funktionen)
+      
    2. [Vererbung](#vererbung)
-      1. ["Vererbung" durch Traits](#vererbung-durch-traits)
-      2. [Branch-Based Inheritance](#branch-based-inheritance)
-         1. [Pattern-Matching](#pattern-matching)
-   3. [Konstruktoren](#konstruktoren)
-   4. [Rust Ownership](#rust-ownership)
+      1. [Traits](#traits)
+      2. [Branch-Based Inheritance](#branch-based-inheritance) 
+
+   3. [Pattern-Matching](#pattern-matching)
+
+   4. [Konstruktoren](#konstruktoren)
+
+   5. [Rust Ownership](#rust-ownership)
       1. [Stack und Heap](#stack-und-heap)
       2. [Ownership Rules](#ownership-rules)
       3. [Binding](#binding)
@@ -43,19 +47,22 @@ um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
       6. [Borrow](#borrow)
       7. [Passing By ...](#passing-by-)
       8. [Einschub: Mutability](#einschub-mutabilty)
-         1. [Veränderliche Referenz & mut](#vernderliche-referenz--mut)
-         2. [Die 4 Möglichkeiten](#die-4-mglichkeiten)
+         1. [Mutable Reference ](#mutable-reference)
+         2. [Die 4 Varianten](#die-4-varianten)
       9. [Ownership in rust-parser](#ownership-in-rust_parser)
          1. [parser.rs](#parserrs)
          2. [Tokenizer Instanz innerhalb Parser Instanz](#tokenizer-instanz-innerhalb-parser-instanz)
          3. [tokenizer.rs](#tokenizerrs)
-   5. [Option vs Optional](#optiont-vs-optionalt)
+
+   6. [Option vs Optional](#option-vs-optional)
       1. [None](#none)
       2. [Some](#some)
-      3. [Methoden](#methoden-gegenberstellung)
+      3. [Methoden](#methoden)
+
 3. [Anderes](#anderes)
    1. [String Indexing](#string-indexing)
    2. [Type-Of](#type_of)
+
 4. [Quellen](#quellen)
 ____
 # Grundlagen
@@ -161,7 +168,7 @@ Hierbei ist std das Crate, any das Modul und [type_name](https://doc.rust-lang.o
 
 <img src="pictures/extern_crate_example.JPG" alt="extern_crates_example" width=50% height=50%>
 
-## Namensräume
+## Namensraum
 C++-Namensräume werden dazu benutzt um Funktionen, Variablen und Klassen zu gruppieren, damit der Compiler sie von anderen gleichnamigen Signaturen unterscheiden kann.
 In Rust wird dies durch die Module geregelt, 
 wobei jede .rs Datei implizit ein Modul ist, mit gleichem Namen wie die Datei.
@@ -259,7 +266,7 @@ der Parser Klasse von der Tokenizer Klasse zu simulieren gibt es verschiedene M�
 "Simulieren" deswegen, weil es in Rust keine Vererbung gibt, wie man es aus C++ oder Java kennt.
 Es ist nicht möglich Felder eines Structs zu erweitern.
 
-### "Vererbung" durch Traits
+### Traits
 Das nächste, was eine Vererbung wie in den objektorientierten Sprachen simulieren kann, sind 
 die sogenannten Traits, die den in Java vorhandenen Interfaces ähneln.
 
@@ -668,7 +675,7 @@ let mut x = 5;
 x = 6;
 ```
 
-#### Veränderliche Referenz & mut
+#### Mutable Reference 
 Die Veränderlichkeit von Variablen hat insofern etwas mit der Eigentümerschaft zu tun,
 dass man einer Funktion erlaubt, den ausgeliehenen Wert (die Referenz) zu verändern.
 ```& mut self``` als Parameter in den parse_ Funktionen bedeutet daher:
@@ -677,7 +684,7 @@ verändern darf, ohne die Eigentümerschaft abzugeben.
 ```& mut self``` ist die Kurzform für ```self: & mut Self```.
 Self wiederum, ist ein Alias für den Typ, welcher vom ```impl``` Block implementiert wird
 
-#### Die 4 Möglichkeiten: 
+#### Die 4 Varianten
 * **self:** immutable move
 * **mut self:** mutable move
 * **&self:** immutable borrow
@@ -795,20 +802,19 @@ Somit sorgt sie dazu, dass der Parser nicht direkt den Tokenizer instanziieren m
 damit die Besitzrecht-Konflikte für den Parameter self nicht auftauchen.
 
 
-### Option<T> vs Optional<T>
+### Option vs Optional
 #### None
 #### Some
-#### Methoden (Gegenüberstellung)
-
+#### Methoden
 
 
 
 ____
-###Anderes
+### Anderes
 In diesem letzten Abschnitt greife ich noch weitere Besonderheiten von Rust auf, die mir im Laufe der
 Projektarbeit begegnet sind und nicht zu den Hauptthemen passten.
 
-####String Indexing
+#### String Indexing
 In C++ ist es möglich einen String zu indexieren, was innerhalb der next() Methode verwendet wird, 
 um die Position des aktuellen Characters im Eingabe-String zu erhöhen.
 ```c++
