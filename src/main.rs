@@ -23,21 +23,21 @@ fn display_parsing(to_parse: &str) {
 
 fn test_parser_good(){
 
-    display_parsing("(1");
+    //display_parsing("1");
 
-    display_parsing("1 + 0");
+    //display_parsing("1 + 0");
 
-    display_parsing("1 + (0)");
+    //display_parsing("1 + (0)");
 
-    display_parsing("1 + 2 * 0");
+    //display_parsing("1 + 2 * 0");
 
     display_parsing("1 * 2 + 0");
 
     display_parsing("(1 + 2) * 2");
 
-    display_parsing("(1 + 2) * 0");
+    //display_parsing("(1 + 2) * 0");
 
-    display_parsing("(1 + 2) * 0 + 2");
+    //display_parsing("(1 + 2) * 0 + 2");
 }
 
 fn test_parser(){
