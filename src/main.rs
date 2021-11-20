@@ -23,7 +23,7 @@ fn display_parsing(to_parse: &str) {
 
 fn test_parser_good(){
 
-    display_parsing("1");
+    display_parsing("(1");
 
     display_parsing("1 + 0");
 

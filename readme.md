@@ -55,13 +55,12 @@ um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
             3. [tokenizer.rs](#tokenizerrs)
 
     6. [Option vs Optional](#option-vs-optional)
-        1. [None](#none)
-        2. [Some](#some)
-        3. [Methoden](#methoden)
-
-3. [Anderes](#anderes)
-    1. [String Indexing](#string-indexing)
-    2. [Type-Of](#type_of)
+       1. [Optional in C++](#optional-in-c)
+       2. [Option in Rust](#option-in-rust)
+       3. [Methoden](#methoden)
+       
+    7.[String Indexing](#string-indexing)
+    
 
 4. [Quellen](#quellen)
 ____
@@ -719,7 +718,7 @@ dass die Felder des Tokenizers public sein müssen. Das ist schnell gelöst, ind
 den Tokenizer Felder einfach ein ```pub``` vorangestellt wird.
 
 Dazu kommt jedoch, dass das Feld token der Datenstruktur Tokenizer seinen ersten Token durch die next() Funktion bekommt.
-Da next() auf die Datenfelder sowohl lesend (für den String)
+Da next() auf die Datenfelder sowohl lesend (für den String s)
 als auch schreibend (für die Position pos) zugreift, muss self veränderlich
 ausgeliehen werden.
 
@@ -802,19 +801,8 @@ Somit sorgt sie dazu, dass der Parser nicht direkt den Tokenizer instanziieren m
 damit die Besitzrecht-Konflikte für den Parameter self nicht auftauchen.
 
 
-### Option vs Optional
-#### None
-#### Some
-#### Methoden
-
-
-
-____
-### Anderes
-In diesem letzten Abschnitt greife ich noch weitere Besonderheiten von Rust auf, die mir im Laufe der
-Projektarbeit begegnet sind und nicht zu den Hauptthemen passten.
-
-#### String Indexing
+### String Indexing
+Als Einschub wird hier noch ein kleiner Unterschied der next() Methode in C++ und Rust aufgegriffen.
 In C++ ist es möglich einen String zu indexieren, was innerhalb der next() Methode verwendet wird,
 um die Position des aktuellen Characters im Eingabe-String zu erhöhen.
 ```c++
@@ -848,17 +836,132 @@ Indexierung nutzen:
 }
 ```
 
+### Option vs Optional
+Manchmal ist es sinnvoll, nicht funktionierende Teile des Programms abzufangen, 
+anstatt nach einem Fehler direkt das Programm zu stoppen.
+Beim Parser kann es zum Beispiel sein, dass man mehrere Aufrufe mit verschiedenen Strings
+machen will. Um dann direkt zu sehen, warum gerade eine bestimmte Eingabe zu einem Fehler
+geführt hat und andere nicht, können die Fehlschläge sichtbar gemacht werden.
+Zum Beispiel indem man "nothing" zurückgibt.
 
-#### Vorteile
-Ein Vorteil einer zum großteil statischen Sprache ist, dass die meisten Variablen
-auf dem Stack gespeichert werden und damit der Zugriff darauf schneller ist.
-* sicherer
-#### C++ shared Pointer
-#### type_of
+#### Optional in C++
+Im C++ Projekt wurde in der utility.h Datei eine Klasse Optional angelegt, 
+die einen generischen Wert im Feld ```val``` speichern kann und eine boolesche Variable
+```bool```. 
 
+```c++
+template<typename T>
+class Optional {
+    bool b;
+    T val;
+    
+    //...
+}
+```
+Dabei gibt es 2 Konstruktoren:
+```c++
+public:
+    Optional() : b(false) {}
+    Optional(T v) : val(v), b(true) {}
+```
+Einen ohne Eingabeparamter und einen mit einem generischen Wert.
+Falls beim Aufruf ein Wert enthalten ist, wird das Feld ```val``` mit 
+dem jeweils übergebenen Wert gesetzt und das Feld ```bool``` auf ```true```, 
+da ein Wert vorhanden ist.
+Falls der Konstruktor ohne Parameter aufgerufen wird, gab es keinen Wert.
+```bool``` bleibt daher auf ```false```.
+Die Klasse implementiert daher die Funktion, dass ein Wert "optional" sein darf.
 
+#### Option in Rust
+In Rust muss diese Klasse nicht portiert werden, da das Crate ```std::``` 
+das Modul ```std::option``` zur Verfügung stellt, das exakt dieselben Funktionen (und sogar mehr)
+implementiert.
+Der Typ ```Option``` ist eine Enumeration und repräsentiert einen optionalen Wert, der entweder 
+irgendein Wert ```Some``` enthält oder keinen ```None```:
+```rust
+pub enum Option<T> {
+    None,
+    Some(T),
+}
+```
+#### Methoden
+Die Methoden nothing() und just(T v) aus dem C++ Projekt entfallen in Rust komplett, 
+da das instanziieren bei einem vorhandenen Wert direkt mit ```Some(value)```
+geschieht.
 
-### Quellen
+In parser.rs wird Some in der parse_f Funktion benutzt, um die Int Ausdrücke zurückzugeben.
+```rust
+fn parse_f(& mut self) -> Option<Exp> {
+    return match &self.t.token {
+        Token::ZERO => {
+            self.t.next_token();
+            Some(Exp::Int { val: 0 })
+        },
+        Token::ONE => {
+            self.t.next_token();
+            Some(Exp::Int { val: 1 })
+        },
+        Token::TWO => {
+            self.t.next_token();
+            Some(Exp::Int { val: 2 })
+        },
+        //...
+    }
+}
+```
+Und falls in parse_e2 oder parse_t2 das aktuelle Token nicht Plus (in parse_e2)
+oder Mult (in parse_t2) entspricht, wird ```Some(left)``` zurückgegeben, da es keinen 
+rechten Ausdruck gibt.
+
+```None``` wird immer dann zurückgegeben, wenn etwas nicht funktioniert hat, als eine
+Art Fehlermeldung.
+Beispielsweise wenn der String leer ist oder eine Klammer geöffnet, aber nie geschlossen wird.
+
+```rust
+ Token::OPEN => {
+                self.t.next_token();
+                let e: Option<Exp> = Parser::parse_e(self);
+                if e.is_none() {
+                    return e;
+                }
+
+                return match self.t.token {
+                    Token::CLOSE => {
+                        self.t.next_token();
+                        e
+                    }
+                    _ => {
+                        let x: Option<Exp>  = None;
+                        x
+                    }
+                }
+```
+Hier wird als erstes geprüft, ob das aktuelle Token OPEN entspricht, also eine Klammer
+geöffnet wurde. Denn diese muss auch irgendwann geschlossen werden.
+Beim Aufruf von ```Parser::parse_e(self)``` werden alle dazwischen kommenden Ausdrücke
+durchgegangen und der ast entsprechend aufgebaut. Wenn diese dann alle abgearbeitet wurden,
+springt das Programm wieder bei der if-Abfrage ```e.is_none()``` ein.
+Falls nun die Klammer leer war, würde man als Ausgabe "nothing" erhalten,
+da dies kein gültiger Ausdruck ist:
+![nothing](/pictures/nothing.JPG)
+
+Falls die Klammer gültige Tokens enthalten hat, muss jetzt noch abgefragt werden,
+ob das Token CLOSE aufgetaucht ist. Falls nicht, wird wieder nothing zurückgegeben.
+Ebenso wenn irgendein anderes Zeichen, welches nicht den Varianten im Token-Enum
+entspricht im String vorkommt.
+
+Die C++ Methode ```bool isJust()``` gibt ```true``` zurück, falls die Variable einen Wert enthält
+und ```bool isNothing()``` gibt ```true``` zurück, falls sie keinen Wert enthält.
+
+In Rust würde das den Methoden ```is_some()->bool``` für ```bool isJust()```
+und ```is_none()->bool``` für ```bool isNothing()``` entsprechen.
+
+Die ```fromJust()``` Methode im C++ Projekt, gibt den jeweils im Feld ```val```
+gespeicherten Wert zurück. 
+In Rust erledigt das die Methode ```unwrap()->T```.
+
+____
+## Quellen
 [String-Indexierung](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208)
 
 https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/
