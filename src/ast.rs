@@ -1,4 +1,3 @@
-
 use std::any::type_name;
 
 fn type_of<T>(_: T) -> &'static str {
@@ -29,18 +28,19 @@ pub enum Exp {
     },
 }
 impl Exp {
-    pub fn set(self: &Exp, set_to: bool) -> (){
+    pub fn set(&mut self, set_to: bool) -> (){
         return match self{
-            Exp::Int { val,  mut b } => {
-                b = set_to
+            Exp::Int { val,  ref mut b} => {
+                //println!("int");
+                *b = set_to
             }
-            Exp::Plus { e1, e2, mut b } => {
-                println!("plus");
-                b = set_to
+            Exp::Plus { e1, e2, ref mut b} => {
+                //println!("plus");
+                *b = set_to
             }
-            Exp::Mult { e1, e2, mut b } => {
-                println!("mult");
-                b = set_to
+            Exp::Mult { e1, e2, mut b} => {
+                //println!("mult");
+                //b = true
             }
         }
     }
@@ -55,57 +55,53 @@ impl Exp {
                 e1.eval() * e2.eval()
             }
 
-
             /*
             Exp::PlusN { e } => {
                 let expressions = e;
                 let mut i: i32 = 0;
-
                 let x = expressions[i];
-
                 /*loop{
                     if type_of(expressions[i]) == type_of(i){
-
                     }
                     i += 1;
                 }
                 */
                 i
-
              */
 
         }
     }
 
-    pub fn pretty(self: Exp) -> String {
+    pub fn pretty(mut self) -> String {
         return match self {
-            Exp::Int { val, b } => {
+            Exp::Int { val, mut b } => {
                 val.to_string()
             },
 
-            Exp::Plus { e1, e2, b } => {
-                if b { //if false Mult has not been visited
-                    let s = format!("{} + {}", e1.pretty(), e2.pretty());
+            Exp::Plus { e1, e2, mut b } => {
+                //println!("b: {}", b);
+                if b { //if true Mult has been visited
+                    let s = format!("( {} + {} )", e1.pretty(), e2.pretty());
                     s.to_string()
                 }
-                else { //if true Mult has been visited
-                    let s = format!("( {} + {} )", e1.pretty(), e2.pretty());
+                else { //if false Mult has not been visited
+                    let s = format!("{} + {}", e1.pretty(), e2.pretty());
                     s.to_string()
                 }
             },
 
-            Exp::Mult { mut e1, mut e2, b } => {
+            Exp::Mult { mut e1, mut e2, mut b } => {
                 e1.set(true);
                 e2.set(true);
 
                 let s = format!( "{} * {}", e1.pretty(), e2.pretty());
                 s.to_string()
             }
-        /*
-        Exp::PlusN { e } => {
-            "".to_string()
-        }
-         */
+            /*
+            Exp::PlusN { e } => {
+                "".to_string()
+            }
+             */
         }
     }
 }
