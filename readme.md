@@ -260,7 +260,7 @@ pub struct Mult<T:Exp> {
     pub e2: T
 }
 ```
-## Vererbung
+## "Vererbung"
 Um die Vererbung der Tokenizer Klasse in C++ von der Klasse Tokenize und wiederum die Vererbung
 der Parser Klasse von der Tokenizer Klasse zu simulieren gibt es verschiedene Möglichkeiten.
 "Simulieren" deswegen, weil es in Rust keine Vererbung gibt, wie man es aus C++ oder Java kennt.
@@ -327,8 +327,8 @@ is much nicer for teaching and ergonomics than “bare trait vs impl Trait”"
 Der Speicher wird automatisch durch den Destruktor
 wieder freigegeben, wenn die Scope in der die Box definiert wurde verlassen wird.
 
-### Branch-Based Inheritance
-Für den rust-parser reicht jedoch eine Branch-basierte Umsetzung der Exp-Vererbung.
+### Branch-Based "Inheritance"
+Für den rust-parser reicht jedoch eine Branch-basierte Umsetzung.
 In Rust gibt es wie in C++ Enumerationen (enums). Wird ein Enum nun als Rückgabetyp
 festgelegt, ist zwar noch immer unbekannt welches der Enum-Varianten am Ende zurückgegeben wird, es ist jedoch
 klar, eines davon wird zurückgegeben. Deswegen wird soviel Speicher allokiert wie die
