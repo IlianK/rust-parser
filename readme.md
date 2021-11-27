@@ -5,7 +5,7 @@
 Der Rust-Parser basiert auf dem C++-Parser Projekt im Rahmen des Softwareprojekts
 im 2. Semester und dient dazu die Unterschiede zwischen der objektorientierten Umsetzung
 in C++ und der datenorientierten Gestaltung in Rust aufzuzeigen.
-Dabei wird ein Hauptaugenmerk auf die speziellen Ownership-Rechte in Rust.
+Dabei wird ein Hauptaugenmerk auf die speziellen Ownership-Rechte in Rust gelegt.
 
 Als Einführung in die Programmiersprache-Rust habe ich hauptsächlich
 folgende [Literatur-Quelle](https://doc.rust-lang.org/book/) benutzt,

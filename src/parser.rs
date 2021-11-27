@@ -1,13 +1,6 @@
 use crate::ast::Exp;
 use crate::tokenizer::*;
 
-use std::any::type_name;
-
-fn type_of<T>(_: T) -> &'static str {
-    type_name::<T>()
-}
-
-
 pub struct Parser {
     t: Tokenizer
 }
@@ -56,19 +49,6 @@ impl Parser {
             }
         }
     }
-
-    /*
-         if(type_of(left) == PlusN<Exp> | type_of(left) == Int<Exp>){ //left only consisted of plus operands or Int operand
-             //because current token is PLUS next number given in right can be appended
-             let tmp = new(PlusN<Exp>{v: left});
-             tmp.push(right.fromJust());
-             return parseE2(tmp);
-         }
-         else{ //left was MultInt
-             return parseE2(new(PlusN<Exp>{v: [left, right.fromJust()]}));
-         }
-     */
-
 
     // T  ::= F T'
     fn parse_t(&mut self) -> Option<Exp> {
