@@ -19,16 +19,13 @@ pub struct Tokenizer{
 
 
 impl Tokenizer {
-    pub fn new(text: &str)->Tokenizer{ //
-        Tokenizer{
+
+    pub fn helper(text: &str)->Tokenizer{
+        let mut t = Tokenizer{
             pos: 0,
             s: text.to_string(),
             token: Token::DEFAULT
-        }
-    }
-
-    pub fn helper(text: &str)->Tokenizer{
-        let mut t = Tokenizer::new(text);
+        };
         t.token = Tokenizer::next(&mut t);
         return t;
     }

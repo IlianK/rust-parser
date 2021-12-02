@@ -524,8 +524,17 @@ In Rust muss nämlich kein Konstruktor definiert werden.
 Möchte man einen neuen Tokenizer erstellen`, könnte man das auch direkt ohne Methodenaufruf machen,
 indem man die Felder des Tokenizers einen Wert zuweist.
 
+Hier zum Beispiel wird in der helper() Funktion direkt der Tokenizer instanziiert.
+Auf die Funktion wird später noch genauer eingegangen.
 ```rust
-let token = Tokenizer{pos:0, s: "1 + 0", Token::DEFAULT }
+    pub fn helper(text: &str)->Tokenizer {
+    let mut t = Tokenizer {
+        pos: 0,
+        s: text.to_string(),
+        token: Token::DEFAULT
+    };
+    //...
+}
 ```
 
 Damit gibt es in Rust eine Art impliziten Konstruktor für jedes Structs mit Feldern.
@@ -533,8 +542,7 @@ Ein Unterschied zu C++ ist allerdings, dass der Konstruktor nicht überladen wer
 Braucht man mehrere Konstruktoren (z.B. einmal ohne und einmal mit (mehreren) Parameter) ist es notwendig auch mehrere new()
 Funktionen zu haben, die sich im Namen unterscheiden.
 
-Die direkte Instanziierung macht in unserem rust-parser an der Stelle keinen Sinn, denn der Tokenizer
-wird nur einmal als Struct-Feld im Parser benötigt.
+
 Schauen wir uns den C++ Code an:
 ```c++
 class Tokenizer : Tokenize {
@@ -794,24 +802,20 @@ In main.rs gibt es nichts, worauf sich ```self``` beziehen kann.
 Um dieses Problem zu umgehen, gibt es die **helper()** Funktion in tokenizer.rs.
 Diese ist ebenfalls keine Methode, da sie nur den zu parsenden String und kein ```self``` entgegennimmt.
 
-Sie ruft für uns die new-Funktion auf, die als Konstruktor dient und unseren Tokenizer
-mit dem zu parsenden-String und den Default-Werten für die Position ```pos ``` und den Token ```token```
-auffüllt. Aus diesem Grund habe ich auch ein DEFAULT-Token zugefügt, der in der C++ Variante nicht vorhanden war.
+Sie instanziiert für uns einen Tokenizer ```t```
+mit dem zu parsenden-String und den Default-Werten für die Position ```pos ``` und dem Token ```token```. Aus diesem Grund habe ich auch ein DEFAULT-Token zugefügt, der in der C++ Variante nicht vorhanden war.
 
 ```rust
-impl Tokenizer {
-    pub fn new(text: &str) -> Tokenizer { //
-        Tokenizer {
-            pos: 0,
-            s: text.to_string(),
-            token: Token::DEFAULT
-        }
-    }
-    //...
+pub fn helper(text: &str)->Tokenizer{
+    let mut t = Tokenizer{
+        pos: 0,
+        s: text.to_string(),
+        token: Token::DEFAULT
+    };
+    t.token = Tokenizer::next(&mut t);
+    return t;
 }
-
 ```
-helper() erstellt also erst einen Tokenizer.
 Dieser Tokenizer ```t``` kann dann einfach veränderlich an die next() Funktion ausgeliehen werden,
 um dann nachträglich den ersten Token zuzuweisen.
 
