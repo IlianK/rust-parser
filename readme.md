@@ -819,13 +819,6 @@ pub fn helper(text: &str)->Tokenizer{
 Dieser Tokenizer ```t``` kann dann einfach veränderlich an die next() Funktion ausgeliehen werden,
 um dann nachträglich den ersten Token zuzuweisen.
 
-```rust
-pub fn helper(text: &str)->Tokenizer{
-        let mut t = Tokenizer::new(text);
-        t.token = Tokenizer::next(&mut t);
-        return t;
-    }
-```
 Somit sorgt sie dafür, dass der Parser nicht direkt den Tokenizer instanziieren muss und
 damit die Besitzrecht-Konflikte für den Parameter self nicht auftreten.
 
