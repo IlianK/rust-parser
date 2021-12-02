@@ -7,15 +7,15 @@ im 2. Semester und dient dazu die Unterschiede zwischen der objektorientierten U
 in C++ und der datenorientierten Gestaltung in Rust aufzuzeigen.
 Dabei wird ein Hauptaugenmerk auf die speziellen Ownership-Rechte in Rust gelegt.
 
-Als Einführung in die Programmiersprache-Rust habe ich hauptsächlich
+Als Einführung in die Programmiersprache Rust habe ich hauptsächlich
 folgende [Literatur-Quelle](https://doc.rust-lang.org/book/) benutzt,
-um mich mit den grundlegenden Besonderheiten und Unterschiede bekannt zu machen.
+um mich mit den grundlegenden Besonderheiten und Unterschieden bekannt zu machen.
 Alle weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) nach Themen hinterlegt.
 
 ### Die Quelldateien:
 + **ast.rs:** stellt einen abstrakten Syntaxbaum zur Verfügung, der durch die pretty-printing Funktion in einen String umgewandelt wird
 + **tokenizer.rs:** zerlegt den Eingabe-String in logisch zusammengehörige Einheiten, den Tokens
-+ **parser.rs:** nimmt als Input die Tokens vom Tokenizer und generiert den AST nach der definierten Grammatik
++ **parser.rs:** nimmt als Input die Tokens vom Tokenizer und generiert den AST-Syntaxbaum nach der definierten Grammatik
 + **main.rs:** allgemeine Testklasse
 ---------
 ### Inhalte
@@ -54,6 +54,7 @@ Alle weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) na
             1. [parser.rs](#parserrs)
             2. [Tokenizer Instanz innerhalb Parser Instanz](#tokenizer-instanz-innerhalb-parser-instanz)
             3. [tokenizer.rs](#tokenizerrs)
+            4. [ref im pattern-matching](#ref-im-pattern-matching)
 
     6. [Option vs Optional](#option-vs-optional)
        1. [Optional in C++](#optional-in-c)
@@ -110,7 +111,7 @@ pub struct Tokenizer{
 }
 ```
 Hier am Beispiel das Äquivalent zur Tokenizer Klasse in C++.
-Die Felder pos und s sind privat. Das Feld token jedoch nicht, da die Datei parser.rs in den parser_ Funktionen
+Die Felder pos und s sind privat. Das Feld token jedoch nicht, da die Datei parser.rs in den parse_ Funktionen
 auf das ```token``` zugreifen muss:
 ```rust
 fn parse_e2(&mut self, left: Box<Exp>) -> Option<Box<Exp>>{
@@ -121,7 +122,7 @@ fn parse_e2(&mut self, left: Box<Exp>) -> Option<Box<Exp>>{
 ## Modules
 Module sind eine Ansammlung von Funktionen, Structs, Traits und Implementierungen.
 Das Modul-System hilft dabei den Code in Gruppen zu strukturieren,
-sowie Gültigkeitsbereiche und Datenschutz (public/ private) zu organisieren.
+sowie Gültigkeitsbereiche und Datenschutz zu organisieren.
 Andere .rs Dateien können diese Module durch ```use``` in ihre Datei einbinden, um deren Funktionalität zu nutzen.
 
 ```Rust
@@ -129,7 +130,7 @@ mod ast;
 mod tokenizer;
 mod parser;
 ```
-Zur Weiteren Strukturierung des Projektes gilt zu erwähnen, dass mehrere Module eines Projektes ein Crate ergeben.
+Zur Weiteren Strukturierung des Projektes gilt zu erwähnen, dass mehrere Module eines Projektes ein Crate bilden können.
 
 ## Crates
 Rust-Crates sind mit Bibliotheken oder Packages zu vergleichen wie man sie aus C++ kennt.
@@ -137,7 +138,7 @@ Sie können je nach Projekt eine geteilte Bibliothek oder ein ausführbares Prog
 **rustc.** kompiliert werden. Jedes Crate hat implizit ein root-Modul, in der der
 Compiler mit der Code-Ausführung startet.
 Das Root-Modul kann wiederum in Sub-Module unterteilt werden kann, wodurch das Projekt strukturiert und organisiert werden kann.
-Der **crate root** ist in unserem rust_parser die main.rs Datei mit den Modulen ast, parser und tokenizer.
+In unserem rust_parser ist die **root** die main.rs Datei mit den Modulen ast, parser und tokenizer.
 Zur Veranschaulichung bietet Rust ein hilfreiches Feature das eine Dokumentation das Projekt erstellt.
 ```
 cargo doc --open
@@ -147,7 +148,7 @@ cargo doc --open
     <img src="pictures/doc2.png" width=50% alt = "doc2" height=50%>
 </p>
 
-Dabei sind alle Bestandteile des Projektes, inklusive alle Structs, Enums,
+Dabei sind alle Bestandteile des Projektes, inklusive aller Structs, Enums,
 Funktionen und deren Implementierung zu sehen.
 
 Außerdem bietet cargo noch die Möglichkeit seine Implementierungen zu veröffentlichen mit dem Befehl:
@@ -169,9 +170,11 @@ Hierbei ist std das Crate, any das Modul und [type_name](https://doc.rust-lang.o
 <img src="pictures/extern_crate_example.JPG" alt="extern_crates_example" width=50% height=50%>
 
 ## Namensraum
-C++-Namensräume werden dazu benutzt um Funktionen, Variablen und Klassen zu gruppieren, damit der Compiler sie von anderen gleichnamigen Signaturen unterscheiden kann.
+C++-Namensräume werden dazu benutzt um Funktionen, Variablen und Klassen zu gruppieren, 
+damit der Compiler sie von anderen gleichnamigen Signaturen unterscheiden kann.
 In Rust wird dies durch die Module geregelt,
 wobei jede .rs Datei implizit ein Modul ist, mit gleichem Namen wie die Datei.
+
 Die Datei parser.rs braucht viele Funktionalitäten von tokenizer.rs:
 Zur Definition des Parser-Structs,
 Zugriff auf die helper() Funktion um einen neuen Tokenizer zuzuweisen
@@ -242,7 +245,7 @@ nach dem ```impl``` Block benannten Typ zugeordnet sind.
 In C++ wurde eine Basis-Klasse für die Expressions Exp definiert, von der dann
 IntExp, PlusExp und MultExp erben und durch ihre Felder val bzw. e1 und e2 erweitern.
 
-Diese benutzerdefinierten Datentypen können in Rust jeweils als Struct
+Diese benutzerdefinierten Datentypen könnten in Rust jeweils als Struct
 zusammengefasst werden:
 
 ```rust
@@ -263,12 +266,12 @@ pub struct Mult<T:Exp> {
 ## "Vererbung"
 Um die Vererbung der Tokenizer Klasse in C++ von der Klasse Tokenize und wiederum die Vererbung
 der Parser Klasse von der Tokenizer Klasse zu simulieren gibt es verschiedene Möglichkeiten.
-"Simulieren" deswegen, weil es in Rust keine Vererbung gibt, wie man es aus C++ oder Java kennt.
+"Simulieren" und die Anführungszeichen deswegen, weil es in Rust keine Vererbung gibt, wie man es aus C++ oder Java kennt.
 Es ist nicht möglich Felder eines Structs zu erweitern.
 
 ### Traits
 Das nächste, was eine Vererbung wie in den objektorientierten Sprachen simulieren kann, sind
-die sogenannten Traits, die den in Java vorhandenen Interfaces ähneln.
+die sogenannten Traits, die aber eher den in Java vorhandenen Interfaces ähneln.
 
 Mit Traits können Funktionen für bestimmtes Verhalten definiert werden.
 Im rust-parser könnte man die Funktionen zum Evaluieren ```eval()``` und
@@ -310,11 +313,11 @@ impl<T:Exp> Exp for Plus<T> {
 Bei Rust handelt es sich um eine statisch typisierte Sprache,
 bei der der Typ jeder Variable bei der Kompilierung bekannt sein muss.
 
-Normalerweise werden alle Werte auf dem Stack allokiert, da sie statisch
-und damit bekannt sind. Um dennoch Rückgaben zu realisieren, die zur Laufzeit unbekannt gibt es das "Boxed"
-Modell. ```Box<T>``` ist eine Art Smart Pointer der Heap-Speicher für den
+Normalerweise werden alle Werte auf dem Stack allokiert. Um dennoch Rückgaben zu realisieren, 
+die zur Laufzeit unbekannt sind, gibt es das "Boxed"
+Modell. ```Box<T>``` ist eine Art Smart Pointer, der Heap-Speicher für den
 generischen Typ ```T``` allokiert.
-Für die parser_ Funktionen wäre somit der Rückgabetyp das Exp-Trait: ```Option<Box<dyn Exp>>```
+Für die parse_ Funktionen, wäre somit der Rückgabetyp das Exp-Trait: ```Option<Box<dyn Exp>>```
 Das Schlüsselwort ```dyn``` steht für **dynamic** und ist nicht unbedingt notwendig.
 Jedoch wird im
 [RFC-2113 Standard](https://github.com/rust-lang/rfcs/blob/master/text/2113-dyn-trait-syntax.md)
@@ -328,24 +331,27 @@ Der Speicher wird automatisch durch den Destruktor
 wieder freigegeben, wenn die Scope in der die Box definiert wurde verlassen wird.
 
 ### Branch-Based "Inheritance"
-Für den rust-parser reicht jedoch eine Branch-basierte Umsetzung.
-In Rust gibt es wie in C++ Enumerationen (enums). Wird ein Enum nun als Rückgabetyp
+Die Benutzung von ```enum``` ist eine andere, einfachere Variante die Vererbung in Rust zu simulieren.
+In Rust gibt es wie in C++ Enumerationen. Wird ein Enum nun als Rückgabetyp
 festgelegt, ist zwar noch immer unbekannt welches der Enum-Varianten am Ende zurückgegeben wird, es ist jedoch
-klar, eines davon wird zurückgegeben. Deswegen wird soviel Speicher allokiert wie die
-größte Enum-Variante benötigt. Daher muss auch der Rückgabetyp nicht mehr in ```Box``` eingehüllt werden.
+klar, eines davon wird zurückgegeben (Branch-Basiert). Da soviel Speicher allokiert wird wie die
+größte Enum-Variante benötigt, muss auch der Rückgabetyp nicht mehr in ```Box``` eingehüllt werden.
 
 ```rust
 pub enum Exp {
     Int {
         val: i32,
+        b: bool
     },
     Plus {
         e1: Box<Exp>,
         e2: Box<Exp>,
+        b: bool
     },
     Mult{
         e1: Box<Exp>,
         e2: Box<Exp>,
+        b: bool
     },
 }
 ```
@@ -353,19 +359,19 @@ Die Instanziierung der Expressions findet an folgenden Stellen statt:
 ```rust
 fn parse_e2(&mut self, left: Box<Exp>) -> Option<Exp> {
     //...
-    Parser::parse_e2(self, Exp::Plus { e1: Box::from(left), e2: Box::from(right.unwrap()) })
-    //...
+    Parser::parse_e2(self, Exp::Plus{ e1: Box::from(left), e2: Box::from(right.unwrap()), b: false })
+    //... create Plus instance
 }
 fn parse_t2(&mut self, left: Box<Exp>) -> Option<Exp> {
     //...
-    Parser::parse_t2(self, Exp::Mult { e1: Box::from(left), e2: Box::from(right.unwrap()) })
-    //...
+    Parser::parse_t2(self, Exp::Mult { e1: Box::from(left), e2: Box::from(right.unwrap()), b: false })
+    //... create Mult instance
 }
 fn parse_f(& mut self) -> Option<Exp> {
     return match &self.t.token {
         Token::ZERO => {
-            //...
-            Some(Exp::Int { val: 0 })
+            //... create Int instance
+            Some(Exp::Int{val: 0, b: false })
         }
         //... same for Token::ONE and Token::TWO
     }
@@ -377,18 +383,21 @@ würde man die Structs folgendermaßen konstruieren:
 pub enum Exp {
     Int {
         val: i32,
+        b: bool
     },
     Plus {
         e1: Exp,
         e2: Exp,
+        b: bool
     },
     Mult{
         e1: Exp,
         e2: Exp,
+        b: bool
     },
 }
 ```
-würde das theoretisch funktionieren, wenn man unbegrenzten Speicher hätte.
+würde das in der Theorie funktionieren, wenn man unbegrenzten Speicher hätte.
 Doch der Compiler warnt uns zu recht:
 
 <img src="pictures/error_infinite_size.JPG" width=50% alt = "error_infinite_size" height=50%>
@@ -408,7 +417,7 @@ Zum Glück wird uns ein hilfreicher Hinweis gegeben:
 
 Es wird vorgeschlagen eine "Indirection" zu nutzen. Das bedeutet, wir speichern
 den Wert nicht direkt, sondern speichern einen Pointer. Da die Größe eines Pointers
-von der Größe der Daten auf die sie zeigt, unabhängig ist,
+von der Größe der Daten, auf die sie zeigt, unabhängig ist,
 löst Box das Problem des unendlichen, rekursiven Speichers.
 
 
@@ -463,13 +472,20 @@ fn display(e: Option<Exp>){
 }
 ```
 Die display()-Funktion bekommt den ast vom Parser. pretty() nimmt als Parameter self entgegen.
+```rust
+fn display_parsing(to_parse: &str) {
+    let parser = parser::Parser::new(to_parse).parse();
+    display(parser);
+}
+```
+
 Jede Funktion, die ein (mut) self oder &(mut) self als Parameter besitzt, kann von der an die
 Struktur gebundene Variable mit dem Punktoperator aufgerufen werden.
 Variable ```e``` entspricht daher dem
 ```self``` im pattern-matching und gibt den passenden geklammerten oder nicht geklammerten Ausdruck zurück.
 
 ## Konstruktoren
-In C++ gibt es zwei Klassen: Zum einen die Tokenize Klasse mit den Feldern pos für die Position und s für
+In C++ gibt es zwei Klassen: Zum einen die Tokenize Klasse mit den Feldern ```pos``` für die Position und ```s``` für
 den String, welcher in Tokens zerlegt werden soll. Zum Anderen die Tokenizer Klasse, die von Tokenize erbt
 und sie um das Feld token erweitert.
 In Rust können diese zwei Klassen in einem Struct zusammengefasst werden:
@@ -486,8 +502,8 @@ Wie vorher erwähnt sind alle Funktionen innerhalb des Blocks assoziiert und hab
 das Schlüsselwort ```self```. Es kann jedoch auch Funktionen innerhalb geben ohne self-Parameter. Diese sind dann nur Funktionen
 und nicht Methoden.
 
-* Funktionen: Code, der durch ihren Namen aufgerufen wird
-* Methoden: Code, der durch ihren Namen aufgerufen wird und mit einem Objekt (hier dem Struct) assoziiert wird.
++ **Funktionen:** Code, der durch ihren Namen aufgerufen wird
++ **Methoden:** Code, der durch ihren Namen aufgerufen wird und mit einem Objekt (hier dem Struct) assoziiert wird.
 
 Assoziierte Funktionen ohne self-Parameter werden oft als Konstruktoren benutzt, die eine neue Instanz des Structs zurückgeben:
 ```rust
@@ -504,7 +520,7 @@ impl Tokenizer {
 }
 ```
 Diese new()-Funktion ist meist optional und eher zur Vereinfachung der Instanziierung gedacht.
-In Rust muss nämlich kein Konstruktor definiert werden.
+In Rust muss nämlich kein Konstruktor definiert werden. 
 Möchte man einen neuen Tokenizer erstellen`, könnte man das auch direkt ohne Methodenaufruf machen,
 indem man die Felder des Tokenizers einen Wert zuweist.
 
@@ -530,11 +546,11 @@ public:
     }
 };
 ```
-Variable token bekommt seine erste Zuweisung bereits im Konstruktor durch die next() Funktion.
+Variable ```token``` bekommt seine erste Zuweisung bereits im Konstruktor durch die next() Funktion.
 In Rust ist das nicht so einfach umzusetzen, da das Prinzip des Ownerships spezielle Betrachtung erfordert.
 
 ## Rust Ownership
-Die sogenannte Eigentümerschaft (Ownership) ist wohl das Merkmal von Rust, dass die
+Die sogenannte Eigentümerschaft (Ownership) ist wohl **das** Merkmal von Rust, dass die
 Programmiersprache von anderen abhebt. Aufgrund dieses Merkmals wird Rust auch als
 eine "Typsichere" Sprache bezeichnet. Das bedeutet, dass der Compiler sicherstellt, dass jedes
 Programm ein wohldefiniertes Verhalten hat. Das Besondere daran ist, dass Rust dafür
@@ -554,6 +570,7 @@ Als kurze Wiederholung hier der Unterschied zwischen Stack und Heap:
 * Speichert Daten die zur Compile-Zeit unbekannt sind
 
 ### Ownership Rules
+Hier eine Übersicht der drei Hauptregeln:
 1. Wenn ein Wert einer Variable zugewiesen wird, ist diese Variable der Eigentümer des Wertes
 2. Ein Wert kann nur einen Eigentümer haben (Ausnahmen mit Shared Ownership std::Rc)
 3. Verlässt der Eigentümer den Gültigkeitsbereich {}, wird der Wert gelöscht
@@ -569,7 +586,7 @@ Denn sonst würde es mehrere Besitzer geben.
 Versucht man dies trotzdem, könnte man (je nach Datentyp) einen Compiler-Fehler bekommen.
 
 Dies gilt nur für Variablen, die nicht das Copy-Trait implementieren.
-Durch Copy wird eine exakte Kopie des Wertes angelegt und an die andere
+Durch Copy wird eine exakte Kopie des Wertes angelegt und an die andere (neu-definierte)
 Variable gebunden. Numerische Werte implementieren Copy implizit.
 ```rust
 pub fn eval(self: &Exp) -> i32 {
@@ -607,7 +624,7 @@ In C++ würde diese Zuweisung funktionieren, da eine **Shallow Copy** durchgefü
 Die Variablen s und t beziehen sich zu Beginn auf unterschiedliche Speicherbereiche.
 Wenn s der Variablen t zugewiesen wird, beziehen sich die beiden Variablen auf denselben Speicherbereich, da nur der
 Pointer kopiert wurde.
-Änderungen an einer der beiden Variablen würden sich die Inhalte der jeweils anderen Variablen auswirken,
+Änderungen an einer der beiden Variablen würden sich auf die Inhalte der jeweils anderen Variablen auswirken,
 da sie auf die gleiche Speicherstelle zeigen.
 
 Die **Deep Copy** würde der Implementation des Copy-Traits in Rust entsprechen.
@@ -629,7 +646,7 @@ den Gültigkeitsbereich verlässt.
 
 Schwieriger wird es, wenn die Verschiebung nicht mehr so auffällig ist.
 Besonders bei Funktionsaufrufen muss darauf geachtet werden, nicht aus Versehen
-das Besitzrecht abzugeben, wenn man die Variable später noch verwenden will.
+das Besitzrecht abzugeben, wenn man die Variable später noch verwenden will oder diese konsumiert werden muss.
 
 Es ist auch nicht immer sinnvoll für Vektoren, Strings oder eigene Structs das Copy-Trait
 zu implementieren, das das Kopieren von Speicher Ressourcen-aufwändig ist.
@@ -646,6 +663,8 @@ andere Variablen. Diese Zuweisungen funktionieren, weil Referenzen auch das Copy
 [implementieren](https://stackoverflow.com/questions/41413336/do-all-primitive-types-implement-the-copy-trait).
 
 ### Passing By ...
+Hier nochmal eine Übersicht der möglichen Übergaben:
+
 **Als Wert übergeben (Passing by value)**
 * Wert implementiert Copy-Trait und wird nicht ausgeliehen
 * Wert ist eine Referenz, welche das Copy-Trait implementiert
@@ -661,7 +680,7 @@ Ohne das Schlüsselwort ```mut``` würde man eine solche Referenz übergeben, um
 die Daten in dem Struct zu lesen.
 
 ### Mutability
-Jedoch möchte man häufig die Daten des Structs verändern, neu zuweisen, überschreiben, etc.
+Jedoch möchte man häufig die Daten des Structs neu zuweisen oder überschreiben.
 In Rust ist nicht möglich so eine einfache Überschreibung wie hier zu machen:
 ```rust
 let x = 5;
@@ -682,25 +701,29 @@ dass man einer Funktion erlaubt, den ausgeliehenen Wert (die Referenz) zu verän
 Man übergibt der Funktion eine Referenz, die die Felder der Datenstruktur Parser
 verändern darf, ohne die Eigentümerschaft abzugeben.
 ```& mut self``` ist die Kurzform für ```self: & mut Self```.
-Self wiederum, ist ein Alias für den Typ, welcher vom ```impl``` Block implementiert wird
+```Self``` wiederum, ist ein Alias für den Typ, welcher vom ```impl``` Block implementiert wird
 
 #### Die 4 Varianten
-* **self:** immutable move
-* **mut self:** mutable move
-* **&self:** immutable borrow
-* **&mut self:** mutable borrow
+* ```self:``` immutable move
+* ```mut self:``` mutable move
+* ```&self:``` immutable borrow
+* ```&mut self:``` mutable borrow
 
 ### Ownership in rust_parser
+Da nun die Grundlagen der Eigentümerschaft geklärt sind, gehe ich im Folgenden auf die 
+Besonderheiten in der Umsetzung in den Dateien parser.rs und tokenizer.rs ein.
+
 #### parser.rs
 Zunächst mal muss auf jeden Fall die parse_f Funktion eine veränderbare Referenz auf
 die Parser Instanz bekommen, da sie das Feld t, welches den Tokenizer enthält für
 den aktuellen Token auslesen muss.
 
 Funktionen parse_e2 und parse_t2 brauchen ebenfalls ```& mut self``` als Parameter,
-da im Fall: Token war ein Plus (parse_e2) oder Token war ein Mult (parse_t2),
-das ```token``` Feld der Tokenizer Instanz das Token des Strings auslesen muss.
+da im Fall: "Token war ein Plus" (parse_e2) oder "Token war ein Mult" (parse_t2),
+das ```token``` Feld der Tokenizer Instanz für das pattern-matching
+ausgelesen werden muss und durch ```self.t.next_token();``` das nächste Token bestimmt wird.
 
-Da man zur Compile-Zeit aber nicht weiß, welcher Weg durch die rekursiven Aufrufe
+Da man zur Compile-Zeit aber nicht weiß welcher Weg durch die rekursiven Aufrufe
 zum Bau der ast-Struktur eingeschlagen wird, müssen alle anderen parse_ Funktionen
 ebenfalls ```&mut self``` als ersten Parameter enthalten.
 Das Besitzrecht für die Instanz wird quasi bis an die parse_f Funktion durchgereicht.
@@ -718,9 +741,10 @@ Versucht man direkt den Tokenizer zu instanziieren stößt man zuerst auf das Pr
 dass die Felder des Tokenizers public sein müssen. Das ist schnell gelöst, indem
 den Tokenizer Felder einfach ein ```pub``` vorangestellt wird.
 
-Dazu kommt jedoch, dass das Feld token der Datenstruktur Tokenizer seinen ersten Token durch die next() Funktion bekommt.
-Da next() auf die Datenfelder sowohl lesend (für den String s)
-als auch schreibend (für die Position pos) zugreift, muss self veränderlich
+Dazu kommt jedoch, dass das Feld ```token``` der Datenstruktur Tokenizer seinen 
+ersten Token durch die next() Funktion bekommt.
+Da next() auf die Datenfelder sowohl lesend (für den String ```s```)
+als auch schreibend (für die Position ```pos```) zugreift, muss ```self``` veränderlich
 ausgeliehen werden.
 
 ```rust
@@ -764,15 +788,15 @@ Und bei der Ausführung die Fehlermeldung [E0424](https://doc.rust-lang.org/erro
 
 self kann nämlich nur in Methoden (assoziierte Funktionen) die sich innerhalb eines
 ```impl``` Blocks auf den zu implementierenden Typ beziehen, verwendet werden.
-In main.rs gibt es nichts, worauf sich self beziehen kann.
+In main.rs gibt es nichts, worauf sich ```self``` beziehen kann.
 
 #### tokenizer.rs
 Um dieses Problem zu umgehen, gibt es die **helper()** Funktion in tokenizer.rs.
-Diese ist ebenfalls keine Methode, da sie nur den zu parsenden String und kein self entgegennimmt.
+Diese ist ebenfalls keine Methode, da sie nur den zu parsenden String und kein ```self``` entgegennimmt.
 
-Sie ruft für uns die new-Funktion aus, die als Konstruktor dient und unseren Tokenizer
+Sie ruft für uns die new-Funktion auf, die als Konstruktor dient und unseren Tokenizer
 mit dem zu parsenden-String und den Default-Werten für die Position ```pos ``` und den Token ```token```
-auffüllt. Aus diesem Grund musste auch ein DEFAULT-Token zugefügt werden, der in der C++ Variante nicht vorhanden war.
+auffüllt. Aus diesem Grund habe ich auch ein DEFAULT-Token zugefügt, der in der C++ Variante nicht vorhanden war.
 
 ```rust
 impl Tokenizer {
@@ -798,8 +822,76 @@ pub fn helper(text: &str)->Tokenizer{
         return t;
     }
 ```
-Somit sorgt sie dazu, dass der Parser nicht direkt den Tokenizer instanziieren muss und
-damit die Besitzrecht-Konflikte für den Parameter self nicht auftauchen.
+Somit sorgt sie dafür, dass der Parser nicht direkt den Tokenizer instanziieren muss und
+damit die Besitzrecht-Konflikte für den Parameter self nicht auftreten.
+
+#### ref im pattern-matching
+Um die Klammern richtig zu setzen, wird sich in der pretty() Funktion
+immer gemerkt, wann ein Ausdruck die Multiplikation
+besucht, indem die set-Methode für die an der Multiplikation beteiligten Ausdrücke
+aufgerufen wird:
+
+```rust
+ pub fn pretty(self) -> String {
+    return match self {
+        //...
+
+        Exp::Mult { mut e1, mut e2, .. } => {
+            e1.set(true);
+            e2.set(true);
+
+            let s = format!("{} * {}", e1.pretty(), e2.pretty());
+            s.to_string()
+        }
+    }
+}
+```
+
+Genau wie in der eval() und pretty() Methode wird wieder ein pattern-matching ausgeführt.
+
+```rust
+impl Exp {
+    pub fn set(&mut self, set_to: bool) -> () {
+        return match self {
+            Exp::Int { ref mut b, .. } => {
+                *b = set_to
+            }
+            Exp::Plus { ref mut b, .. } => {
+                *b = set_to
+            }
+
+            _ => {}
+        }
+    }
+}
+```
+Hier muss als Erstes eine Referenz für die Variable ```b``` übergeben werden, da 
+der als Parameter übergebene Ausdruck seine boolesche Variable ```b``` auf den 
+in ```set_to``` übergebenen Wert ändern muss (beziehungsweise auf ```true```).
+
+Da ```b``` eine Referenz ist, kann (genau wie in C++) mit dem Stern-Operator ```*```
+der Wert geändert werden, auf den der Pointer zeigt.
+
+Anders als bei der eval() und pretty() Methode ist nun
+das Schlüsselwort ```ref``` vorhanden. Das match-Statement verbraucht/ [konsumiert](https://doc.rust-lang.org/std/keyword.ref.html)
+nämlich ihre Eingabe.
+Bei der pretty() Funktion führte das zu keinem Fehler, denn dies ist die Funktion die unsere 
+End-Ausgabe produziert und damit alles ihr zur Verfügung stehende verbrauchen darf.
+
+Die set() Funktion verändert jedoch noch, während die pretty() Funktion ausgeführt wird, 
+die Variable ```b```. Falls sie dabei den ihr übergebenen Ausdruck verbraucht, führt das zu einem 
+Fehler, da pretty() diese noch für die Rückgabe braucht.
+
+Durch ```ref``` wird explizit gesagt, dass das Pattern-Binding nicht durch ein move, verschoben
+(also konsumiert) wird, sondern nur ausgeliehen. 
+
+```&``` Kann an dieser Stelle nicht verwendet werden,
+da damit angegeben wird, dass das Pattern eine Referenz zu einem Objekt erwartet und als Teil
+des Patterns gesehen wird. 
+
+```ref``` ist im Gegensatz dazu, **nicht** Teil des Patterns und wird daher auch nicht verbraucht.
+Da die Werte gebunden mit dem ```ref``` Schlüsselwort nur ausgeliehen und nicht "gemoved" werden,
+sind sie noch nach dem ```match``` valide.
 
 
 ### String Indexing
@@ -817,7 +909,8 @@ Token_t Tokenize::next() {
     }
 }
 ```
-In Rust ist diese einfache Schreibweise nicht übertragbar, da Indexierung von String nicht möglich ist.
+In Rust ist diese einfache Schreibweise [nicht übertragbar](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208),
+da Indexierung von Strings nicht möglich ist.
 Der Grund dafür, liegt dabei, dass intern Rust-Strings in UTF-8 kodiert sind und nicht in ASCII.
 UTF-8 ist eine Kodierung mit variabler Länge für Unicode-Zeichen. Da sie variabel ist, kann die Speicherposition
 des n-ten Zeichens nicht bestimmt werden, ohne den gesamten String zu durchlaufen.
@@ -875,7 +968,7 @@ Die Klasse implementiert daher die Funktion, dass ein Wert "optional" sein darf.
 
 #### Option in Rust
 In Rust muss diese Klasse nicht portiert werden, da das Crate ```std::``` 
-das Modul ```std::option``` zur Verfügung stellt, das exakt dieselben Funktionen (und sogar mehr)
+das Modul ```std::option``` zur Verfügung stellt, welches exakt dieselben Funktionen (und sogar mehr)
 implementiert.
 Der Typ ```Option``` ist eine Enumeration und repräsentiert einen optionalen Wert, der entweder 
 irgendein Wert ```Some``` enthält oder keinen ```None```:
@@ -890,7 +983,7 @@ Die Methoden nothing() und just(T v) aus dem C++ Projekt entfallen in Rust kompl
 da das instanziieren bei einem vorhandenen Wert direkt mit ```Some(value)```
 geschieht.
 
-In parser.rs wird Some in der parse_f Funktion benutzt, um die Int Ausdrücke zurückzugeben.
+In parser.rs wird ```Some``` in der parse_f Funktion benutzt, um die Int Ausdrücke zurückzugeben.
 ```rust
 fn parse_f(& mut self) -> Option<Exp> {
     return match &self.t.token {

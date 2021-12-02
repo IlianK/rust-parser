@@ -17,7 +17,7 @@ pub enum Exp {
 impl Exp {
     pub fn set(&mut self, set_to: bool) -> (){
         return match self{
-            Exp::Int {ref mut b, .. } => {
+            Exp::Int {ref mut b , .. } => {
                 *b = set_to
             }
             Exp::Plus {ref mut b, .. } => {
@@ -30,7 +30,7 @@ impl Exp {
 
     pub fn eval(self: &Exp) -> i32 {
         return match self {
-            Exp::Int { val, .. } => *val,
+            Exp::Int { val, b } => *val,
             Exp::Plus { e1, e2, .. } => {
                 e1.eval() + e2.eval()
             },

@@ -12,8 +12,8 @@ pub enum Token{
 }
 
 pub struct Tokenizer{
-    pub pos: usize,
-    pub s: String,
+    pos: usize,
+    s: String,
     pub token: Token
 }
 
