@@ -13,7 +13,7 @@ um mich mit den grundlegenden Besonderheiten und Unterschieden bekannt zu machen
 Alle weiteren Quellen und Referenzen sind im Inhaltspunkt [Quellen](#quellen) nach Themen hinterlegt.
 
 ### Die Quelldateien:
-+ **ast.rs:** stellt einen abstrakten Syntaxbaum zur Verfügung, der durch die pretty-printing Funktion in einen String umgewandelt wird
++ **ast.rs:** stellt durch die pretty-printing Funktion den geparsten Ausdruck vereinfacht dar
 + **tokenizer.rs:** zerlegt den Eingabe-String in logisch zusammengehörige Einheiten, den Tokens
 + **parser.rs:** nimmt als Input die Tokens vom Tokenizer und generiert den AST-Syntaxbaum nach der definierten Grammatik
 + **main.rs:** allgemeine Testklasse
@@ -111,7 +111,7 @@ pub struct Tokenizer{
 }
 ```
 Hier am Beispiel das Äquivalent zur Tokenizer Klasse in C++.
-Die Felder pos und s sind privat. Das Feld token jedoch nicht, da die Datei parser.rs in den parse_ Funktionen
+Die Felder ```pos``` und ```s``` sind privat. Das Feld ```token``` jedoch nicht, da die Datei parser.rs in den parse_ Funktionen
 auf das ```token``` zugreifen muss:
 ```rust
 fn parse_e2(&mut self, left: Box<Exp>) -> Option<Box<Exp>>{
@@ -130,16 +130,23 @@ mod ast;
 mod tokenizer;
 mod parser;
 ```
-Zur Weiteren Strukturierung des Projektes gilt zu erwähnen, dass mehrere Module eines Projektes ein Crate bilden können.
+Zur Weiteren Strukturierung des Projektes gilt zu erwähnen, 
+dass mehrere Module eines Projektes ein Crate bilden können.
 
 ## Crates
-Rust-Crates sind mit Bibliotheken oder Packages zu vergleichen wie man sie aus C++ kennt.
-Sie können je nach Projekt eine geteilte Bibliothek oder ein ausführbares Programm sein, die durch den Rust Compiler
-**rustc.** kompiliert werden. Jedes Crate hat implizit ein root-Modul, in der der
+Rust-Crates sind mit Bibliotheken oder Packages zu vergleichen wie man 
+sie aus C++ kennt.
+Sie können je nach Projekt eine geteilte Bibliothek oder ein ausführbares 
+Programm sein, die durch den Rust Compiler
+**rustc.** kompiliert werden. Jedes Crate hat implizit ein root-Modul, 
+in der der
 Compiler mit der Code-Ausführung startet.
-Das Root-Modul kann wiederum in Sub-Module unterteilt werden kann, wodurch das Projekt strukturiert und organisiert werden kann.
-In unserem rust_parser ist die **root** die main.rs Datei mit den Modulen ast, parser und tokenizer.
-Zur Veranschaulichung bietet Rust ein hilfreiches Feature das eine Dokumentation das Projekt erstellt.
+Das Root-Modul kann wiederum in Sub-Module unterteilt werden kann, 
+wodurch das Projekt strukturiert und organisiert werden kann.
+In unserem rust_parser ist die **root** die main.rs Datei mit den 
+Modulen ast, parser und tokenizer.
+Zur Veranschaulichung bietet Rust ein hilfreiches Feature, welches eine 
+Dokumentation für das Projekt erstellt.
 ```
 cargo doc --open
 ```
@@ -151,13 +158,16 @@ cargo doc --open
 Dabei sind alle Bestandteile des Projektes, inklusive aller Structs, Enums,
 Funktionen und deren Implementierung zu sehen.
 
-Außerdem bietet cargo noch die Möglichkeit seine Implementierungen zu veröffentlichen mit dem Befehl:
+Außerdem bietet cargo noch die Möglichkeit seine Implementierungen zu 
+veröffentlichen mit dem Befehl:
 ```
 cargo publish
 ```
 
-Hierbei wird jedoch ein Account bei [crates.io](https://crates.io/) gebraucht (sowie ein GitHub Account),
-wodurch dann mithilfe eines einzigartigen API-Tokens, ein eigenes Crate veröffentlicht werden kann.
+Hierbei wird jedoch ein Account bei [crates.io](https://crates.io/) 
+gebraucht (sowie ein GitHub Account),
+wodurch dann mithilfe eines einzigartigen API-Tokens, ein eigenes 
+Crate veröffentlicht werden kann.
 
 Will man ein externes Crate nutzen, nur bestimmte Module oder Funktionen davon,
 kann man diese ebenfalls mit dem Schlüsselwort ```use``` einbinden:
@@ -165,7 +175,8 @@ kann man diese ebenfalls mit dem Schlüsselwort ```use``` einbinden:
 use std::any::type_name; //Returns the name of a type as a string slice
 ```
 
-Hierbei ist std das Crate, any das Modul und [type_name](https://doc.rust-lang.org/std/any/fn.type_name.html) die Funktion.
+Hierbei ist ```std``` das Crate, any das Modul und 
+[type_name](https://doc.rust-lang.org/std/any/fn.type_name.html) die Funktion.
 
 <img src="pictures/extern_crate_example.JPG" alt="extern_crates_example" width=50% height=50%>
 
@@ -177,8 +188,8 @@ wobei jede .rs Datei implizit ein Modul ist, mit gleichem Namen wie die Datei.
 
 Die Datei parser.rs braucht viele Funktionalitäten von tokenizer.rs:
 Zur Definition des Parser-Structs,
-Zugriff auf die helper() Funktion um einen neuen Tokenizer zuzuweisen
-und auf das Token enum um pattern-matching ausführen zu können.
+Zugriff auf die helper() Funktion, um einen neuen Tokenizer zuzuweisen,
+und auf das Token enum, um pattern-matching ausführen zu können.
 Der Tokenizer (mit seiner Implementierung) und das Token enum kann
 folgendermaßen inkludiert werden:
 ```
@@ -190,7 +201,7 @@ Deshalb ist es sinnvoll und kürzer einfach das ganze Modul zuzufügen, was mit 
 use crate::tokenizer::*;
 ```
 
-Von ast.rs braucht parser.rs allerdings nur das enum Exp um die
+Von ast.rs braucht parser.rs allerdings nur das enum Exp, um die
 jeweiligen arithmetischen Ausdrücke zu erzeugen.
 ```
 use crate::ast::Exp;
@@ -218,7 +229,8 @@ durchgeführt werden müssen.
 
 --------
 # Implementierung
-In diesem Abschnitt werde ich erst allgemein auf die Rust-Structs und deren Implementierung eingehen,
+In diesem Abschnitt werde ich erst allgemein auf die Rust-Structs und deren 
+Implementierung eingehen,
 die in jeder .rs Datei ihre Verwendung finden und danach einzeln auf
 die Quelldateien.
 
@@ -234,13 +246,13 @@ die die Felder, mit deren Zugriffsrecht festlegt und für die anschließend mit 
 
 ### self
 Beim Implementieren von Structs durch ```impl``` ist ```self``` der erste Parameter der in Funktionen verwendet wird.
-Das Schlüsselwort ```self``` ist zu vergleichen mit ```this``` in C++.
+Das Schlüsselwort ```self``` ähnelt von der Anwendung her dem Keyword```this``` in C++.
 Durch den Punktoperator können wir mithilfe von [self](https://doc.rust-lang.org/std/keyword.self.html) auf die Felder des Structs
 zugreifen.
 
 ### Assoziierte Funktionen
-Alle Funktionen, die innerhalb des ```impl``` Blocks gefasst werden, sind assoziiert, da sie dem
-nach dem ```impl``` Block benannten Typ zugeordnet sind.
+Alle Funktionen, die innerhalb des ```impl``` Blocks gefasst werden, sind assoziiert, 
+da sie dem nach dem ```impl``` Block benannten Typ zugeordnet sind.
 
 In C++ wurde eine Basis-Klasse für die Expressions Exp definiert, von der dann
 IntExp, PlusExp und MultExp erben und durch ihre Felder val bzw. e1 und e2 erweitern.
@@ -331,11 +343,23 @@ Der Speicher wird automatisch durch den Destruktor
 wieder freigegeben, wenn die Scope in der die Box definiert wurde verlassen wird.
 
 ### Branch-Based "Inheritance"
-Die Benutzung von ```enum``` ist eine andere, einfachere Variante die Vererbung in Rust zu simulieren.
+Die Benutzung von ```enum``` ist eine andere, 
+einfachere Variante die Vererbung in Rust zu simulieren.
 In Rust gibt es wie in C++ Enumerationen. Wird ein Enum nun als Rückgabetyp
-festgelegt, ist zwar noch immer unbekannt welches der Enum-Varianten am Ende zurückgegeben wird, es ist jedoch
-klar, eines davon wird zurückgegeben (Branch-Basiert). Da soviel Speicher allokiert wird wie die
-größte Enum-Variante benötigt, muss auch der Rückgabetyp nicht mehr in ```Box``` eingehüllt werden.
+festgelegt, ist zwar noch immer unbekannt welches der Enum-Varianten am Ende 
+zurückgegeben wird, es ist jedoch
+klar, eines davon wird zurückgegeben (Branch-Basiert). 
+Da soviel Speicher allokiert wird wie die
+größte Enum-Variante benötigt, muss auch der Rückgabetyp nicht mehr in ```Box``` 
+eingehüllt werden.
+
+#### Wiederholung: Boxed
+Eine Box ist ein intelligenter
+Zeiger auf einen Heap-zugewiesenen Wert vom Typ T.
+Alle Werte in Rust werden standardmäßig auf dem Stack gespeichert.
+Durch Box<T> können Werte geschachtelt auf dem Heap allokiert werden.
+Wenn eine Box den Gültigkeitsbereich verlässt, wird ihr Destruktor aufgerufen, das innere
+Objekt zerstört und der Speicher auf dem Heap freigegeben.
 
 ```rust
 pub enum Exp {
@@ -420,7 +444,6 @@ den Wert nicht direkt, sondern speichern einen Pointer. Da die Größe eines Poi
 von der Größe der Daten, auf die sie zeigt, unabhängig ist,
 löst Box das Problem des unendlichen, rekursiven Speichers.
 
-
 Die Implementierung der eval() und pretty() Funktionen ändert sich leicht.
 Da nun als Rückgabe einer der drei Enum-Varianten Int, Plus oder Mult entstehen kann,
 wird ein pattern-matching durchgeführt um herauszufinden welche der eval() und pretty() Funktionen
@@ -459,7 +482,7 @@ eigenen Structs.
 In diesem Fall gibt es eine eval()-Funktion mit einer Exp-Referenz als Eingabe-Parameter,
 welcher mit allen Fällen verglichen wird und die passende Rückgabe liefert.
 
-Im parser.rs wird in der main.rs das pattern-match initiiert:
+Im parser.rs wird durch den Aufruf von pretty() in der main.rs das pattern-match initiiert:
 ```rust
 fn display(e: Option<Exp>){
     if e.is_none() {
@@ -471,7 +494,7 @@ fn display(e: Option<Exp>){
     }
 }
 ```
-Die display()-Funktion bekommt den ast vom Parser. pretty() nimmt als Parameter self entgegen.
+Die display()-Funktion bekommt den ast vom Parser. pretty() nimmt als Parameter ```self``` entgegen.
 ```rust
 fn display_parsing(to_parse: &str) {
     let parser = parser::Parser::new(to_parse).parse();
@@ -521,7 +544,7 @@ impl Tokenizer {
 ```
 Diese new()-Funktion ist meist optional und eher zur Vereinfachung der Instanziierung gedacht.
 In Rust muss nämlich kein Konstruktor definiert werden. 
-Möchte man einen neuen Tokenizer erstellen`, könnte man das auch direkt ohne Methodenaufruf machen,
+Möchte man einen neuen Tokenizer erstellen, könnte man das auch direkt ohne Methodenaufruf machen,
 indem man die Felder des Tokenizers einen Wert zuweist.
 
 Hier zum Beispiel wird in der helper() Funktion direkt der Tokenizer instanziiert.
@@ -539,7 +562,8 @@ Auf die Funktion wird später noch genauer eingegangen.
 
 Damit gibt es in Rust eine Art impliziten Konstruktor für jedes Structs mit Feldern.
 Ein Unterschied zu C++ ist allerdings, dass der Konstruktor nicht überladen werden kann.
-Braucht man mehrere Konstruktoren (z.B. einmal ohne und einmal mit (mehreren) Parameter) ist es notwendig auch mehrere new()
+Braucht man mehrere Konstruktoren (z.B. einmal ohne und einmal mit (mehreren) Parameter) 
+ist es notwendig auch mehrere new()
 Funktionen zu haben, die sich im Namen unterscheiden.
 
 
@@ -554,15 +578,19 @@ public:
     }
 };
 ```
-Variable ```token``` bekommt seine erste Zuweisung bereits im Konstruktor durch die next() Funktion.
-In Rust ist das nicht so einfach umzusetzen, da das Prinzip des Ownerships spezielle Betrachtung erfordert.
+Variable ```token``` bekommt seine erste Zuweisung bereits im Konstruktor 
+durch die next() Funktion.
+In Rust ist das nicht so einfach umzusetzen, da das Prinzip des Ownerships 
+spezielle Betrachtung erfordert.
 
 ## Rust Ownership
-Die sogenannte Eigentümerschaft (Ownership) ist wohl **das** Merkmal von Rust, dass die
-Programmiersprache von anderen abhebt. Aufgrund dieses Merkmals wird Rust auch als
-eine "Typsichere" Sprache bezeichnet. Das bedeutet, dass der Compiler sicherstellt, dass jedes
-Programm ein wohldefiniertes Verhalten hat. Das Besondere daran ist, dass Rust dafür
-weder einen Garbage Collector wie Java noch eine manuelle Speicherverwaltung wie in C/C++ braucht.
+Die sogenannte Eigentümerschaft (Ownership) ist wohl **das** Merkmal von Rust, 
+dass die Programmiersprache von anderen abhebt. 
+Aufgrund dieses Merkmals wird Rust auch als
+eine "Typsichere" Sprache bezeichnet. Das bedeutet, dass der Compiler sicherstellt, 
+dass jedes Programm ein wohldefiniertes Verhalten hat. Das Besondere daran ist, 
+dass Rust dafür weder einen Garbage Collector wie Java noch eine 
+manuelle Speicherverwaltung wie in C/C++ braucht.
 
 ### Stack und Heap
 In Rust kann Speicher wie in C++ auf dem Heap oder Stack allokiert werden.
@@ -630,8 +658,8 @@ Obwohl im Code optisch gesehen das gleiche wie oben angewandt wird, kommt es zu 
 ### Shallow and Deep Copy in C++
 In C++ würde diese Zuweisung funktionieren, da eine **Shallow Copy** durchgeführt werden würde.
 Die Variablen s und t beziehen sich zu Beginn auf unterschiedliche Speicherbereiche.
-Wenn s der Variablen t zugewiesen wird, beziehen sich die beiden Variablen auf denselben Speicherbereich, da nur der
-Pointer kopiert wurde.
+Wenn s der Variablen t zugewiesen wird, beziehen sich die beiden Variablen auf 
+denselben Speicherbereich, da nur der Pointer kopiert wurde.
 Änderungen an einer der beiden Variablen würden sich auf die Inhalte der jeweils anderen Variablen auswirken,
 da sie auf die gleiche Speicherstelle zeigen.
 
@@ -820,7 +848,7 @@ Dieser Tokenizer ```t``` kann dann einfach veränderlich an die next() Funktion 
 um dann nachträglich den ersten Token zuzuweisen.
 
 Somit sorgt sie dafür, dass der Parser nicht direkt den Tokenizer instanziieren muss und
-damit die Besitzrecht-Konflikte für den Parameter self nicht auftreten.
+damit die Besitzrecht-Konflikte für den Parameter self auftreten.
 
 #### ref im pattern-matching
 Um die Klammern richtig zu setzen, wird sich in der pretty() Funktion
@@ -892,8 +920,10 @@ sind sie noch nach dem ```match``` valide.
 
 
 ### String Indexing
-Als Einschub wird hier noch ein kleiner Unterschied der next() Methode in C++ und Rust aufgegriffen.
-In C++ ist es möglich einen String zu indexieren, was innerhalb der next() Methode verwendet wird,
+Als Einschub wird hier noch ein kleiner Unterschied der next() Methode in C++ und 
+Rust aufgegriffen.
+In C++ ist es möglich einen String zu indexieren, 
+was innerhalb der next() Methode verwendet wird,
 um die Position des aktuellen Characters im Eingabe-String zu erhöhen.
 ```c++
 Token_t Tokenize::next() {
@@ -907,13 +937,14 @@ Token_t Tokenize::next() {
 }
 ```
 In Rust ist diese einfache Schreibweise [nicht übertragbar](https://stackoverflow.com/questions/24542115/how-to-index-a-string-in-rust/44081208),
-da Indexierung von Strings nicht möglich ist.
+da die Indexierung von Strings nicht möglich ist.
 Der Grund dafür, liegt dabei, dass intern Rust-Strings in UTF-8 kodiert sind und nicht in ASCII.
-UTF-8 ist eine Kodierung mit variabler Länge für Unicode-Zeichen. Da sie variabel ist, kann die Speicherposition
+UTF-8 ist eine Kodierung mit variabler Länge für Unicode-Zeichen. 
+Da sie variabel ist, kann die Speicherposition
 des n-ten Zeichens nicht bestimmt werden, ohne den gesamten String zu durchlaufen.
 
-Als Workaround in Rust könnte man deshalb den String in einen Vektor kopieren und anschließend diesen zur
-Indexierung nutzen:
+Als Workaround in Rust könnte man deshalb den String in einen Vektor kopieren 
+und anschließend diesen zur Indexierung nutzen:
 ```rust
     pub fn next(&mut self) -> Token {
     //...
@@ -965,8 +996,8 @@ Die Klasse implementiert daher die Funktion, dass ein Wert "optional" sein darf.
 
 #### Option in Rust
 In Rust muss diese Klasse nicht portiert werden, da das Crate ```std::``` 
-das Modul ```std::option``` zur Verfügung stellt, welches exakt dieselben Funktionen (und sogar mehr)
-implementiert.
+das Modul ```std::option``` zur Verfügung stellt, welches exakt dieselben Funktionen 
+(und sogar mehr) implementiert.
 Der Typ ```Option``` ist eine Enumeration und repräsentiert einen optionalen Wert, der entweder 
 irgendein Wert ```Some``` enthält oder keinen ```None```:
 ```rust
